@@ -54,10 +54,17 @@ end
 Invoke `as_json`.
 
 ``` ruby
-  Widget.first.as_json # the `:short` version of the JSON, `gadgets` not included
-  Widget.first.as_json({ :properties => :short }) # equivalent to the above
-  Widget.first.as_json({ :properties => :public }) # `:public` version of the JSON, `gadgets` returned with `:short` JSON, no `:extras`
-  Widget.first.as_json({ :properties => :all }) # `:all` version of the JSON, `gadgets` returned with `:all` JSON, including `:extras`
+# the `:short` version of the JSON, `gadgets` not included
+Widget.first.as_json
+
+# equivalent to the above
+Widget.first.as_json({ :properties => :short })
+
+# `:public` version of the JSON, `gadgets` returned with `:short` JSON, no `:extras`
+Widget.first.as_json({ :properties => :public })
+
+# `:all` version of the JSON, `gadgets` returned with `:all` JSON, including `:extras`
+Widget.first.as_json({ :properties => :all })
 ```
 
 Configuration
