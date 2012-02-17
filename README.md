@@ -1,9 +1,9 @@
-Cached JSON [![Build Status](https://secure.travis-ci.org/dblock/cached-json.png)](http://travis-ci.org/dblock/cached-json)
-===========
+CachedJson [![Build Status](https://secure.travis-ci.org/dblock/cached-json.png)](http://travis-ci.org/dblock/cached-json)
+==========
 
 Typical *as_json* definitions may involve lots of database point queries and method calls. When returning collections of objects, a single call may yield hundreds of database queries that can take seconds. This library mitigates the problem by implementing a module called *CachedJson*.
 
-CachedJson enables returning mutliple JSON formats from a single class and provides some rules for returning embedded or referenced data. It then uses a scheme where fragments of JSON are cached for a particular (class, id) pair containing only the data that doesn't involve references/embedded documents. To get the full JSON for an instance, CachedJson will combine fragments of JSON from the instance with fragments representing the JSON for its references. In the best case, when all of these fragments are cached, this falls through to a few cache lookups followed by a couple Ruby hash merges to create the JSON.
+CachedJson enables returning multiple JSON formats from a single class and provides some rules for returning embedded or referenced data. It then uses a scheme where fragments of JSON are cached for a particular (class, id) pair containing only the data that doesn't involve references/embedded documents. To get the full JSON for an instance, CachedJson will combine fragments of JSON from the instance with fragments representing the JSON for its references. In the best case, when all of these fragments are cached, this falls through to a few cache lookups followed by a couple Ruby hash merges to create the JSON.
 
 CachedJson currently only works with the Mongoid ODM. We're looking forward to pull requests to enable ActiveRecord.
 
