@@ -1,4 +1,4 @@
-Cached JSON
+Cached JSON [![Build Status](https://secure.travis-ci.org/dblock/cached-json.png)](http://travis-ci.org/dblock/cached-json)
 ===========
 
 Typical *as_json* definitions may involve lots of database point queries and method calls. When returning collections of objects, a single call may yield hundreds of database queries that can take seconds. This library mitigates the problem by implementing a module called *CachedJson*.
@@ -6,6 +6,12 @@ Typical *as_json* definitions may involve lots of database point queries and met
 CachedJson enables returning mutliple JSON formats from a single class and provides some rules for returning embedded or referenced data. It then uses a scheme where fragments of JSON are cached for a particular (class, id) pair containing only the data that doesn't involve references/embedded documents. To get the full JSON for an instance, CachedJson will combine fragments of JSON from the instance with fragments representing the JSON for its references. In the best case, when all of these fragments are cached, this falls through to a few cache lookups followed by a couple Ruby hash merges to create the JSON.
 
 CachedJson currently only works with the Mongoid ODM. We're looking forward to pull requests to enable ActiveRecord.
+
+Resources
+---------
+
+* [Need Help?](http://groups.google.com/group/cached-json)
+* [Travis CI](https://secure.travis-ci.org/dblock/cached-json)
 
 Quickstart
 ----------
@@ -64,6 +70,20 @@ CachedJson.configure do |config|
 end
 ```
 
+Definining Fields
+-----------------
+
+CachedJson supports the following options.
+
+* `:hide_as_child_json_when` is an optional function that hides the child JSON from `as_json` parent objects, eg. `cached_json :hide_as_child_json_when => lambda { |instance| ! instance.is_secret? }`
+
+CachedJson field definitions support the following options.
+
+* `:definition` can be a symbol or an anonymous function, eg. `:description => { :definition => :name }` or `:description => { :definition => lambda { |instance| instance.name } }`
+* `:type` can be `:reference`, required for referenced objects
+* `:properties` can be one of `:short`, `:public`, `:all`, in this order
+* `:markdown` will convert HTML into markdown, eg. `:dont_trust_this_field => { :markdown => true }`
+
 Turning It Off
 --------------
 
@@ -107,11 +127,14 @@ Invoke `as_json` with JSON caching.
     start = Time.now; Widget.all.take(100).as_json({ :properties => :short }); Time.now - start
     => 0.914590311
 
+Contributing
+------------
+
+Fork the project. Make your feature addition or bug fix with tests. Send a pull request. Bonus points for topical branches.
+
 Copyright and License
 ---------------------
 
 MIT License, see [LICENSE](LICENSE.md) for details.
 
-(c) 2012 Art.sy Inc. and [Contributors](CONTRIBUTORS.md)
-
-
+(c) 2012 [Art.sy Inc.](http://artsy.github.com) and [Contributors](CONTRIBUTORS.md)
