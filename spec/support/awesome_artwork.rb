@@ -6,7 +6,7 @@ class AwesomeArtwork
   has_one :awesome_image
   
   json_fields \
-    name: {},
-    image: { type: :reference, definition: :awesome_image }
+    :name => {},
+    :image => { :type => :reference, :definition => :awesome_image }
 end
 

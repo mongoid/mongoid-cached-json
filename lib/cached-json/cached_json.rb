@@ -19,7 +19,7 @@ module CachedJson
     def json_fields(defs)
       self.hide_as_child_json_when = defs.delete(:hide_as_child_json_when) || lambda { |a| false }
       self.all_json_properties = [:short, :public, :all]
-      cached_json_defs = Hash[defs.map { |k,v| [k, {type: :callable, properties: :short, definition: k }.merge(cached_json_reparameterize(k, v))] }]
+      cached_json_defs = Hash[defs.map { |k,v| [k, { :type => :callable, :properties => :short, :definition => k }.merge(cached_json_reparameterize(k, v))] }]
       self.cached_json_field_defs = {}
       self.cached_json_reference_defs = {}
       self.all_json_properties.each_with_index do |property, i|
@@ -55,8 +55,8 @@ module CachedJson
         object_reference = nil
         clazz, id = object_def[:clazz], object_def[:id]
       end
-      json = CachedJson.config.cache.fetch(self.cached_json_key(options, clazz, id), {force: (ENV["DISABLE_JSON_CACHING"] =~ /^(true|yes|1)$/)}) do
-        object_reference = clazz.where(_id: id).first if !object_reference
+      json = CachedJson.config.cache.fetch(self.cached_json_key(options, clazz, id), { :force => (ENV["DISABLE_JSON_CACHING"] =~ /^(true|yes|1)$/) }) do
+        object_reference = clazz.where({ :_id => id }).first if !object_reference
         if !object_reference or (!is_top_level_json and options[:properties] != :all and clazz.hide_as_child_json_when.call(object_reference))
           nil
         else
@@ -67,11 +67,11 @@ module CachedJson
       end
       reference_defs = clazz.cached_json_reference_defs[options[:properties]]
       if !reference_defs.empty?
-        object_reference = clazz.where(_id: id).first if !object_reference
+        object_reference = clazz.where({ :_id => id }).first if !object_reference
         if object_reference and (is_top_level_json or options[:properties] == :all or !clazz.hide_as_child_json_when.call(object_reference))
           json = json.merge(Hash[reference_defs.map do |field, definition|
             json_properties_type = (options[:properties] == :all) ? :all : :short
-            [field, clazz.resolve_json_reference(options.merge({properties: json_properties_type, is_top_level_json: false}), object_reference, field, definition)]
+            [field, clazz.resolve_json_reference(options.merge({ :properties => json_properties_type, :is_top_level_json => false}), object_reference, field, definition)]
           end])
         end
       end
@@ -87,11 +87,11 @@ module CachedJson
     def cached_json_reparameterize(k, v)
       case v[:markdown]
       when true
-        v.merge(definition: lambda { |model| 
+        v.merge({ :definition => lambda { |model|
           s = model.send(k).to_s
           s = CachedJson::DownmarkIt.to_markdown(s) if !!(s =~ /\<.*\>/)
           s
-        })
+        }})
       else
         v
       end
@@ -108,10 +108,10 @@ module CachedJson
         key = reference_def[:metadata].key.to_sym
         if reference_def[:metadata].relation == Mongoid::Relations::Referenced::ManyToMany
           reference_json = object.send(key).map do |id|
-            materialize_json(options, {clazz: clazz, id: id})
+            materialize_json(options, { :clazz => clazz, :id => id })
           end.compact
         elsif reference_def[:metadata].relation == Mongoid::Relations::Referenced::In
-          reference_json = materialize_json(options, {clazz: clazz, id: object.send(key)})
+          reference_json = materialize_json(options, { :clazz => clazz, :id => object.send(key) })
         end
       end
       # If we get to this point and reference_json is still nil, there's no chance we can
@@ -125,20 +125,20 @@ module CachedJson
 
   end
 
-  def as_json(options={properties: :short})
+  def as_json(options = { :properties => :short })
     raise ArgumentError.new("Missing options[:properties]") if (options.nil? || options[:properties].nil?)
     raise ArgumentError.new("Unknown properties option: #{options[:properties]}") if !self.all_json_properties.member?(options[:properties])
-    self.class.materialize_json({is_top_level_json: true}.merge(options), {object: self})
+    self.class.materialize_json({ :is_top_level_json => true }.merge(options), { :object => self })
   end
 
   # Expire all JSON entries for this class.
   def expire_cached_json
     self.all_json_properties.each do |properties|
       [true, false].each do |is_top_level_json|
-        CachedJson.config.cache.delete(self.class.cached_json_key({properties: properties, is_top_level_json: is_top_level_json}, self.class, self.id))
+        CachedJson.config.cache.delete(self.class.cached_json_key({:properties => properties, :is_top_level_json => is_top_level_json}, self.class, self.id))
       end
     end
-  end    
+  end
 
   class << self
   

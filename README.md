@@ -26,8 +26,8 @@ class Gadget
   belongs_to :widget
 
   json_fields \
-    name: { },
-    extras: { properties: :public }
+    :name => { },
+    :extras => { :properties => :public }
 
 end
 
@@ -38,8 +38,8 @@ class Widget
   has_many :gadgets
 
   json_fields \
-    name: { },
-    gadgets: { type: :reference, properties: :public }
+    :name => { },
+    :gadgets => { :type => :reference, :properties => :public }
 
 end
 ```
@@ -48,9 +48,9 @@ Invoke `as_json`.
 
 ``` ruby
   Widget.first.as_json # the `:short` version of the JSON, `gadgets` not included
-  Widget.first.as_json({properties: :short}) # equivalent to the above
-  Widget.first.as_json({properties: :public}) # `:public` version of the JSON, `gadgets` returned with `:short` JSON, no `:extras`
-  Widget.first.as_json({properties: :all}) # `:all` version of the JSON, `gadgets` returned with `:all` JSON, including `:extras`
+  Widget.first.as_json({ :properties => :short }) # equivalent to the above
+  Widget.first.as_json({ :properties => :public }) # `:public` version of the JSON, `gadgets` returned with `:short` JSON, no `:extras`
+  Widget.first.as_json({ :properties => :all }) # `:all` version of the JSON, `gadgets` returned with `:all` JSON, including `:extras`
 ```
 
 Configuration
@@ -87,24 +87,24 @@ First, how long does it take to pull 100 widgets back from the database?
 
 Invoke `as_json` without JSON caching.
 
-    start = Time.now; Widget.all.take(100).as_json({properties: :short}); Time.now - start
+    start = Time.now; Widget.all.take(100).as_json({ :properties => :short }); Time.now - start
     => 4.945250191
-    start = Time.now; Widget.all.take(100).as_json({properties: :short}); Time.now - start
+    start = Time.now; Widget.all.take(100).as_json({ :properties => :short }); Time.now - start
     => 2.607833912
-    start = Time.now; Widget.all.take(100).as_json({properties: :short}); Time.now - start
+    start = Time.now; Widget.all.take(100).as_json({ :properties => :short }); Time.now - start
     => 2.744518664
-    start = Time.now; Widget.all.take(100).as_json({properties: :short}); Time.now - start
+    start = Time.now; Widget.all.take(100).as_json({ :properties => :short }); Time.now - start
     => 3.143353997
 
 Invoke `as_json` with JSON caching.
 
-    start = Time.now; Widget.all.take(100).as_json({properties: :short}); Time.now - start
+    start = Time.now; Widget.all.take(100).as_json({ :properties => :short }); Time.now - start
     => 0.929413099
-    start = Time.now; Widget.all.take(100).as_json({properties: :short}); Time.now - start
+    start = Time.now; Widget.all.take(100).as_json({ :properties => :short }); Time.now - start
     => 0.995467915
-    start = Time.now; Widget.all.take(100).as_json({properties: :short}); Time.now - start
+    start = Time.now; Widget.all.take(100).as_json({ :properties => :short }); Time.now - start
     => 0.830720099
-    start = Time.now; Widget.all.take(100).as_json({properties: :short}); Time.now - start
+    start = Time.now; Widget.all.take(100).as_json({ :properties => :short }); Time.now - start
     => 0.914590311
 
 Copyright and License

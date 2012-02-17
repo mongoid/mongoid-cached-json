@@ -3,12 +3,12 @@ class JsonManager
   include CachedJson
   
   field :name
-  field :ssn, default: "123-45-6789"
+  field :ssn, :default => "123-45-6789"
   has_many :json_employees
   
   json_fields \
-    name: {},
-    ssn: { properties: :all },
-    employees: { type: :reference, definition: :json_employees }
+    :name => {},
+    :ssn => { :properties => :all },
+    :employees => { :type => :reference, :definition => :json_employees }
 end
 
