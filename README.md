@@ -90,12 +90,37 @@ Mongoid::CachedJson field definitions support the following options.
 * `:definition` can be a symbol or an anonymous function, eg. `:description => { :definition => :name }` or `:description => { :definition => lambda { |instance| instance.name } }`
 * `:type` can be `:reference`, required for referenced objects
 * `:properties` can be one of `:short`, `:public`, `:all`, in this order
-* `:markdown` will convert HTML into markdown, eg. `:dont_trust_this_field => { :markdown => true }`
 
-Turning It Off
---------------
+Transformations
+---------------
 
-Taking part in the whole Mongoid::CachedJson optimization scheme is entirely optional: you can still write *as_json* methods where it makes sense. You can also set `ENV['DISABLE_JSON_CACHING']=true`, which switches all of this caching off entirely in case this turns out not to be The Solution To All Of Your Problems (TM).
+You can define global transformations on all JSON values with `Mongoid::CachedJson.config.transform`. Each transformation must return the new value.
+
+In the following example we extend the JSON definition with an application-specific `:trusted` field and encode any content that is not trusted.
+
+``` ruby
+class Widget
+  include Mongoid::CachedJson
+
+  field :name
+  field :description
+
+  json_fields \
+    :name => { :trusted => true },
+    :description => { }
+end
+```
+
+``` ruby config/initializers/mongoid-cached-json.rb
+  Mongoid::CachedJson.config.transform do |field, definition, value|
+    (!! definition[:trusted]) ? value : CGI.escapeHTML(value)
+  end
+```
+
+Turning Caching Off
+-------------------
+
+Taking part in the Mongoid::CachedJson optimization scheme is optional: you can still write *as_json* methods where it makes sense. You can also set `ENV['DISABLE_JSON_CACHING']=true`, which switches all of this caching, but keeps transformations and `json_fields` definitions, in case this turns out not to be The Solution To All Of Your Performance Problems (TM).
 
 Contributing
 ------------

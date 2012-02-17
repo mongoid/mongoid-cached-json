@@ -3,7 +3,7 @@ module Mongoid
   module CachedJson #:nodoc
     module Config
       extend self
-      include ActiveModel::Observing
+      include ActiveSupport::Callbacks
   
       attr_accessor :settings, :defaults
       @settings = {}
@@ -53,8 +53,8 @@ module Mongoid
       #
       # @return [ Cache ] The configured cache or a default cache instance.
       def cache
-        @cache = default_cache unless defined?(@cache)
-        @cache
+        settings[:cache] = default_cache unless settings.has_key?(:cache)
+        settings[:cache]
       end
   
       # Sets the cache to use.
@@ -64,15 +64,27 @@ module Mongoid
       #
       # @return [ Cache ] The newly set cache.
       def cache=(cache)
-        @cache = cache
+        settings[:cache] = cache
       end
   
       # Reset the configuration options to the defaults.
       #
       # @example Reset the configuration options.
-      #   config.reset
-      def reset
+      #   config.reset!
+      def reset!
         settings.replace(defaults)
+      end
+      
+      # Define a transformation on JSON data.
+      #
+      # @example Convert every string in materialized JSON to upper-case.
+      #   config.transform do |field, value|
+      #      value.upcase
+      #   end
+      def transform(& block)
+        settings[:transform] = [] unless settings.has_key?(:transform)
+        settings[:transform] << block if block_given?
+        settings[:transform]
       end
   
     end

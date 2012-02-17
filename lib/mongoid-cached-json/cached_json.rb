@@ -20,7 +20,7 @@ module Mongoid
       def json_fields(defs)
         self.hide_as_child_json_when = defs.delete(:hide_as_child_json_when) || lambda { |a| false }
         self.all_json_properties = [:short, :public, :all]
-        cached_json_defs = Hash[defs.map { |k,v| [k, { :type => :callable, :properties => :short, :definition => k }.merge(cached_json_reparameterize(k, v))] }]
+        cached_json_defs = Hash[defs.map { |k,v| [k, { :type => :callable, :properties => :short, :definition => k }.merge(v)] }]
         self.cached_json_field_defs = {}
         self.cached_json_reference_defs = {}
         self.all_json_properties.each_with_index do |property, i|
@@ -62,7 +62,11 @@ module Mongoid
             nil
           else
             Hash[clazz.cached_json_field_defs[options[:properties]].map do |field, definition|
-              [field, definition[:definition].is_a?(Symbol) ? object_reference.send(definition[:definition]) : definition[:definition].call(object_reference)]
+              json_value = (definition[:definition].is_a?(Symbol) ? object_reference.send(definition[:definition]) : definition[:definition].call(object_reference))
+              Mongoid::CachedJson.config.transform.each do |t|
+                json_value = t.call(field, definition, json_value)
+              end
+              [field, json_value]
             end]
           end
         end
@@ -82,20 +86,6 @@ module Mongoid
       # Cache key.
       def cached_json_key(options, cached_class, cached_id)
         "as_json/#{cached_class}/#{cached_id}/#{options[:properties]}/#{!!options[:is_top_level_json]}"
-      end
-      
-      # Apply conversions, if any.
-      def cached_json_reparameterize(k, v)
-        case v[:markdown]
-        when true
-          v.merge({ :definition => lambda { |model|
-            s = model.send(k).to_s
-            s = Mongoid::CachedJson::DownmarkIt.to_markdown(s) if !!(s =~ /\<.*\>/)
-            s
-          }})
-        else
-          v
-        end
       end
   
       # If the reference is a symbol, we may be lucky and be able to figure out the as_json

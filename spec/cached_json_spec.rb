@@ -46,22 +46,6 @@ describe Mongoid::CachedJson do
       3.times { foobar.as_json({ :properties => :public }).should == public_result.merge({ :foo => "foo" }) }
       3.times { foobar.as_json({ :properties => :short }).should == short_result.merge({ :foo => "foo" }) }
     end
-    context "sanitizing fields" do
-      before(:each) do
-        @dirty_content = "<strong>Content</strong>"
-        @dirty_example = DirtyJsonFoobar.new({ :dirty_foo => @dirty_content, :ignored_foo => @dirty_content })
-      end
-      it "sanitizes JSON fields if :markdown == true" do
-        @dirty_example.as_json({ :properties => :public })[:dirty_foo].should == "**Content**"
-      end
-      it "leaves fields alone by default" do
-        @dirty_example.as_json({ :properties => :public })[:ignored_foo].should == @dirty_content
-      end
-      it "doesn't choke on nil fields" do
-        @dirty_example.dirty_foo = nil
-        @dirty_example.as_json({ :properties => :public })[:dirty_foo].should == ""
-      end
-    end
   end
   context "many-to-one relationships" do
     it "uses the correct properties on the base object and passes :short or :all as appropriate" do
@@ -263,6 +247,50 @@ describe Mongoid::CachedJson do
         json[:name].should == "Artwork"
         json[:image][:name].should == "Image"
         json[:image][:urls].map{ |u| u[:url] }.sort.should == [@common_url, @common_url, new_url].sort
+      end
+    end
+  end
+  context "transform" do
+    context "upcase" do
+      before :each do
+        Mongoid::CachedJson.config.transform do |field, definition, value|
+          value.upcase
+        end
+      end
+      after :each do
+        Mongoid::CachedJson.config.reset!
+      end
+      it "transforms every value in returned JSON" do
+        JsonFoobar.new({ :foo => "foo", :bar => "Bar", :baz => "BAZ" }).as_json.should == { "Baz" => "BAZ", :default_foo => "DEFAULT_FOO", :foo => "FOO" }
+      end
+    end
+    context "with options" do
+      before :each do
+        Mongoid::CachedJson.config.transform do |field, definition, value|
+          definition[:transform] ? value.send(definition[:transform].to_sym) : value
+        end
+      end
+      after :each do
+        Mongoid::CachedJson.config.reset!
+      end
+      it "transforms every value in returned JSON using the :transform attribute" do
+        JsonTransform.new({ :upcase => "upcase", :downcase => "DOWNCASE", :nochange => "eLiTe" }).as_json.should == { :upcase => "UPCASE", :downcase => "downcase", :nochange => "eLiTe" }
+      end
+    end
+    context "with mutliple transformations" do
+      before :each do
+        Mongoid::CachedJson.config.transform do |field, definition, value|
+          value.to_i + 1
+        end
+        Mongoid::CachedJson.config.transform do |field, definition, value|
+          value.to_i / 2
+        end
+      end
+      after :each do
+        Mongoid::CachedJson.config.reset!
+      end
+      it "transforms every value in returned JSON using the :transform attribute" do
+        JsonMath.new({ :number => 9 }).as_json.should == { :number => 5 }
       end
     end
   end
