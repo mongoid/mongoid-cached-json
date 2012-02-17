@@ -56,7 +56,7 @@ module Mongoid
           object_reference = nil
           clazz, id = object_def[:clazz], object_def[:id]
         end
-        json = Mongoid::CachedJson.config.cache.fetch(self.cached_json_key(options, clazz, id), { :force => (ENV["DISABLE_JSON_CACHING"] =~ /^(true|yes|1)$/) }) do
+        json = Mongoid::CachedJson.config.cache.fetch(self.cached_json_key(options, clazz, id), { :force => !! Mongoid::CachedJson.config.disable_caching }) do
           object_reference = clazz.where({ :_id => id }).first if !object_reference
           if !object_reference or (!is_top_level_json and options[:properties] != :all and clazz.hide_as_child_json_when.call(object_reference))
             nil

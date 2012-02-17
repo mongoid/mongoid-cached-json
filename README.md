@@ -117,10 +117,15 @@ end
   end
 ```
 
+Mixing with Standard as_json
+----------------------------
+
+Taking part in the Mongoid::CachedJson `json_fields` scheme is optional: you can still write *as_json* methods where it makes sense.
+
 Turning Caching Off
 -------------------
 
-Taking part in the Mongoid::CachedJson optimization scheme is optional: you can still write *as_json* methods where it makes sense. You can also set `ENV['DISABLE_JSON_CACHING']=true`, which switches all of this caching, but keeps transformations and `json_fields` definitions, in case this turns out not to be The Solution To All Of Your Performance Problems (TM).
+You can set `Mongoid::CachedJson.config.disable_caching = true`. It may be a good idea to set it to `ENV['DISABLE_JSON_CACHING']`, in case this turns out not to be The Solution To All Of Your Performance Problems (TM).
 
 Contributing
 ------------

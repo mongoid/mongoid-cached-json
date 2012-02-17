@@ -153,7 +153,6 @@ describe Mongoid::CachedJson do
       end
     end
   end
-
   context "with a hide_as_child_json_when definition" do
     it "should yield JSON when as_json is called directly and hide_as_child_json_when returns false on an instance" do
       c = SometimesSecret.create({ :should_tell_secret => true })
@@ -292,6 +291,20 @@ describe Mongoid::CachedJson do
       it "transforms every value in returned JSON using the :transform attribute" do
         JsonMath.new({ :number => 9 }).as_json.should == { :number => 5 }
       end
+    end
+  end
+  context "with cache disabled" do
+    before :each do
+      Mongoid::CachedJson.config.disable_caching = true
+    end
+    it "forces a cache miss" do
+      example = JsonFoobar.create({ :foo => "FOO", :baz => "BAZ", :bar => "BAR" })
+      Mongoid::CachedJson.config.cache.should_receive(:fetch).with("as_json/JsonFoobar/#{example.id}/short/true", { :force => true }).twice
+      example.as_json
+      example.as_json
+    end
+    after :each do
+      Mongoid::CachedJson.config.reset!
     end
   end
 end

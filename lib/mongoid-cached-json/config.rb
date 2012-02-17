@@ -36,6 +36,8 @@ module Mongoid
         RUBY
       end
       
+      option :disable_caching, { :default => false }
+      
       # Returns the default cache store, which is either a Rails logger of stdout logger
       #
       # @example Get the default cache store
