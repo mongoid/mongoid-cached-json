@@ -1,6 +1,6 @@
 class JsonEmployee
   include Mongoid::Document
-  include CachedJson
+  include Mongoid::CachedJson
   
   field :name
   field :nickname, :default => "My Favorite"

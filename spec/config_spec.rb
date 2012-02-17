@@ -1,15 +1,15 @@
 require 'spec_helper'
 
-describe CachedJson::Config do
+describe Mongoid::CachedJson::Config do
   before :each do
-    @cache= CachedJson::Config.cache
+    @cache= Mongoid::CachedJson::Config.cache
   end
   after :each do
-    CachedJson::Config.cache = @cache
+    Mongoid::CachedJson::Config.cache = @cache
   end
   it "configures a cache store" do
     cache = Class.new
-    CachedJson.configure do |config|
+    Mongoid::CachedJson.configure do |config|
       config.cache = cache
     end
     cache.should_receive(:fetch).once

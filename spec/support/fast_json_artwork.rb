@@ -1,6 +1,6 @@
 class FastJsonArtwork
   include Mongoid::Document
-  include CachedJson
+  include Mongoid::CachedJson
   
   field :name, :default => "Artwork"
   field :display_name, :default => "Awesome Artwork"

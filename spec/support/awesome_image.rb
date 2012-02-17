@@ -1,6 +1,6 @@
 class AwesomeImage
   include Mongoid::Document
-  include CachedJson
+  include Mongoid::CachedJson
   
   field :name
   field :nickname, :default => "Mona"

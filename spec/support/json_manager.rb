@@ -1,6 +1,6 @@
 class JsonManager
   include Mongoid::Document
-  include CachedJson
+  include Mongoid::CachedJson
   
   field :name
   field :ssn, :default => "123-45-6789"

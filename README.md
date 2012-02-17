@@ -1,30 +1,31 @@
-CachedJson [![Build Status](https://secure.travis-ci.org/dblock/cached-json.png)](http://travis-ci.org/dblock/cached-json)
-==========
+Mongoid::CachedJson [![Build Status](https://secure.travis-ci.org/dblock/mongoid-cached-json.png)](http://travis-ci.org/dblock/mongoid-cached-json)
+===================
 
 Typical *as_json* definitions may involve lots of database point queries and method calls. When returning collections of objects, a single call may yield hundreds of database queries that can take seconds. This library mitigates the problem by implementing a module called *CachedJson*.
 
 CachedJson enables returning multiple JSON formats from a single class and provides some rules for returning embedded or referenced data. It then uses a scheme where fragments of JSON are cached for a particular (class, id) pair containing only the data that doesn't involve references/embedded documents. To get the full JSON for an instance, CachedJson will combine fragments of JSON from the instance with fragments representing the JSON for its references. In the best case, when all of these fragments are cached, this falls through to a few cache lookups followed by a couple Ruby hash merges to create the JSON.
 
-CachedJson currently only works with the Mongoid ODM. We're looking forward to pull requests to enable ActiveRecord.
+Using Mongoid::CachedJson we were able to cut our JSON API average response time by about a factor of 10.
 
 Resources
 ---------
 
-* [Need Help?](http://groups.google.com/group/cached-json)
-* [Travis CI](https://secure.travis-ci.org/dblock/cached-json)
+* [Need Help?](http://groups.google.com/group/mongoid-cached-json)
+* [Source Code](http://github.com/dblock/mongoid-cached-json)
+* [Travis CI](https://secure.travis-ci.org/dblock/mongoid-cached-json)
 
 Quickstart
 ----------
 
-Add `cached-json` to your Gemfile.
+Add `mongoid-cached-json` to your Gemfile.
 
-    gem "cached-json"
+    gem "mongoid-cached-json"
 
-Include `CachedJson` in your models.
+Include `Mongoid::CachedJson` in your models.
 
 ``` ruby
 class Gadget
-  include CachedJson
+  include Mongoid::CachedJson
 
   field :name
   field :extras
@@ -38,7 +39,7 @@ class Gadget
 end
 
 class Widget
-  include CachedJson
+  include Mongoid::CachedJson
 
   field :name
   has_many :gadgets
@@ -62,10 +63,10 @@ Invoke `as_json`.
 Configuration
 -------------
 
-By default CachedJson will use an instance of `ActiveSupport::Cache::MemoryStore` in a non-Rails and `Rails.cache` in a Rails environment. You can configure it to use any other cache store.
+By default `Mongoid::CachedJson` will use an instance of `ActiveSupport::Cache::MemoryStore` in a non-Rails and `Rails.cache` in a Rails environment. You can configure it to use any other cache store.
 
 ``` ruby
-CachedJson.configure do |config|
+Mongoid::CachedJson.configure do |config|
   config.cache = ActiveSupport::Cache::FileStore.new
 end
 ```
@@ -73,11 +74,11 @@ end
 Definining Fields
 -----------------
 
-CachedJson supports the following options.
+Mongoid::CachedJson supports the following options.
 
 * `:hide_as_child_json_when` is an optional function that hides the child JSON from `as_json` parent objects, eg. `cached_json :hide_as_child_json_when => lambda { |instance| ! instance.is_secret? }`
 
-CachedJson field definitions support the following options.
+Mongoid::CachedJson field definitions support the following options.
 
 * `:definition` can be a symbol or an anonymous function, eg. `:description => { :definition => :name }` or `:description => { :definition => lambda { |instance| instance.name } }`
 * `:type` can be `:reference`, required for referenced objects
@@ -87,45 +88,7 @@ CachedJson field definitions support the following options.
 Turning It Off
 --------------
 
-Taking part in the whole CachedJson optimization scheme is entirely optional: you can still write *as_json* methods where it makes sense. You can also set `ENV['DISABLE_JSON_CACHING']=true`, which switches all of this caching off entirely in case this turns out not to be The Solution To All Of Your Problems (TM).
-
-Benchmarks
-----------
-
-The following benchmarks are anecdotal evidence. To collect these numbers CachedJson has been applied to one specific project.
-
-First, how long does it take to pull 100 widgets back from the database?
-
-    start = Time.now; Widget.all.take(100); Time.now - start
-    => 0.293994069
-    start = Time.now; Widget.all.take(100); Time.now - start
-    => 0.173017952
-    start = Time.now; Widget.all.take(100); Time.now - start
-    => 0.056002937
-    start = Time.now; Widget.all.take(100); Time.now - start
-    => 0.307731487
-
-Invoke `as_json` without JSON caching.
-
-    start = Time.now; Widget.all.take(100).as_json({ :properties => :short }); Time.now - start
-    => 4.945250191
-    start = Time.now; Widget.all.take(100).as_json({ :properties => :short }); Time.now - start
-    => 2.607833912
-    start = Time.now; Widget.all.take(100).as_json({ :properties => :short }); Time.now - start
-    => 2.744518664
-    start = Time.now; Widget.all.take(100).as_json({ :properties => :short }); Time.now - start
-    => 3.143353997
-
-Invoke `as_json` with JSON caching.
-
-    start = Time.now; Widget.all.take(100).as_json({ :properties => :short }); Time.now - start
-    => 0.929413099
-    start = Time.now; Widget.all.take(100).as_json({ :properties => :short }); Time.now - start
-    => 0.995467915
-    start = Time.now; Widget.all.take(100).as_json({ :properties => :short }); Time.now - start
-    => 0.830720099
-    start = Time.now; Widget.all.take(100).as_json({ :properties => :short }); Time.now - start
-    => 0.914590311
+Taking part in the whole Mongoid::CachedJson optimization scheme is entirely optional: you can still write *as_json* methods where it makes sense. You can also set `ENV['DISABLE_JSON_CACHING']=true`, which switches all of this caching off entirely in case this turns out not to be The Solution To All Of Your Problems (TM).
 
 Contributing
 ------------

@@ -1,6 +1,6 @@
 class SometimesSecret
   include Mongoid::Document
-  include CachedJson
+  include Mongoid::CachedJson
   
   field :secret, :default => "Afraid of the dark"
   field :should_tell_secret, :type => Boolean

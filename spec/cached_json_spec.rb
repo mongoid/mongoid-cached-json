@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe CachedJSON do
+describe Mongoid::CachedJson do
   it "has a version" do
-    CachedJSON::VERSION.should_not be_nil
-    CachedJSON::VERSION.to_f.should > 0
+    Mongoid::CachedJson::VERSION.should_not be_nil
+    Mongoid::CachedJson::VERSION.to_f.should > 0
   end
   context "with basic fields defined for export with json_fields" do
     it "allows subsets of fields to be returned by varying the properties definition" do

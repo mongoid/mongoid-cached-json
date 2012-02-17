@@ -1,6 +1,6 @@
 class FastJsonUrl
   include Mongoid::Document
-  include CachedJson
+  include Mongoid::CachedJson
 
   field :url, :default => "http://art.sy/omg.jpeg"
   field :is_public, :default => false

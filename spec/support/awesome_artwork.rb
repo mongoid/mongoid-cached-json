@@ -1,6 +1,6 @@
 class AwesomeArtwork
   include Mongoid::Document
-  include CachedJson
+  include Mongoid::CachedJson
   
   field :name
   has_one :awesome_image

@@ -1,6 +1,6 @@
 class SecretParent
   include Mongoid::Document
-  include CachedJson
+  include Mongoid::CachedJson
 
   field :name
   has_one :sometimes_secret

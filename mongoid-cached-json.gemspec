@@ -4,30 +4,30 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = "cached-json"
+  s.name = "mongoid-cached-json"
   s.version = "0.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Aaron Windsor", "Daniel Doubrovkine"]
+  s.authors = ["Aaron Windsor", "Daniel Doubrovkine", "Frank Macreery"]
   s.date = "2012-02-17"
-  s.description = "Cached-json is a DSL for describing JSON representations of models."
+  s.description = "Cached-json is a DSL for describing JSON representations of Mongoid models."
   s.email = "dblock@dblock.org"
   s.extra_rdoc_files = [
     "LICENSE.md",
     "README.md"
   ]
   s.files = [
-    "lib/cached-json.rb",
-    "lib/cached-json/cached_json.rb",
-    "lib/cached-json/config.rb",
-    "lib/cached-json/downmark_it.rb",
-    "lib/cached-json/version.rb"
+    "lib/mongoid-cached-json.rb",
+    "lib/mongoid-cached-json/cached_json.rb",
+    "lib/mongoid-cached-json/config.rb",
+    "lib/mongoid-cached-json/downmark_it.rb",
+    "lib/mongoid-cached-json/version.rb"
   ]
-  s.homepage = "http://github.com/dblock/cached-json"
+  s.homepage = "http://github.com/dblock/mongoid-cached-json"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = "1.8.10"
-  s.summary = "Effective model-level JSON caching."
+  s.summary = "Effective model-level JSON caching for the Mongoid ODM."
 
   if s.respond_to? :specification_version then
     s.specification_version = 3

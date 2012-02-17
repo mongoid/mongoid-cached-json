@@ -1,6 +1,6 @@
 class JsonFoobar
   include Mongoid::Document
-  include CachedJson
+  include Mongoid::CachedJson
 
   field :foo
   field :bar

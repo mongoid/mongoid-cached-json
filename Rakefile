@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'bundler'
 
-require File.expand_path('../lib/cached-json/version', __FILE__)
+require File.expand_path('../lib/mongoid-cached-json/version', __FILE__)
 
 begin
   Bundler.setup(:default, :development)
@@ -15,14 +15,14 @@ require 'rake'
 
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
-  gem.name = "cached-json"
-  gem.homepage = "http://github.com/dblock/cached-json"
+  gem.name = "mongoid-cached-json"
+  gem.homepage = "http://github.com/dblock/mongoid-cached-json"
   gem.license = "MIT"
-  gem.summary = "Effective model-level JSON caching."
-  gem.description = "Cached-json is a DSL for describing JSON representations of models."
+  gem.summary = "Effective model-level JSON caching for the Mongoid ODM."
+  gem.description = "Cached-json is a DSL for describing JSON representations of Mongoid models."
   gem.email = "dblock@dblock.org"
-  gem.version = CachedJSON::VERSION
-  gem.authors = [ "Aaron Windsor", "Daniel Doubrovkine" ]
+  gem.version = Mongoid::CachedJson::VERSION
+  gem.authors = [ "Aaron Windsor", "Daniel Doubrovkine", "Frank Macreery" ]
   gem.files = Dir.glob('lib/**/*')
 end
 
@@ -42,7 +42,7 @@ Rake::RDocTask.new do |rdoc|
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
 
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "cached-json #{version}"
+  rdoc.title = "mongoid-cached-json #{version}"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('LICENSE*')
   rdoc.rdoc_files.include('lib/**/*.rb')
