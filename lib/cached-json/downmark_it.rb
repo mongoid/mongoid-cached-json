@@ -1,3 +1,4 @@
+# encoding: utf-8
 # =Overview
 # DownmarkIt is a library to convert HTML to markdown, based on Hpricot[http://github.com/hpricot/hpricot/].
 #

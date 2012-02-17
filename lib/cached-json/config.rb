@@ -1,3 +1,4 @@
+# encoding: utf-8
 module CachedJson #:nodoc
   module Config
     extend self
@@ -33,7 +34,7 @@ module CachedJson #:nodoc
         end
       RUBY
     end
-
+    
     # Returns the default cache store, which is either a Rails logger of stdout logger
     #
     # @example Get the default cache store

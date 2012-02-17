@@ -1,3 +1,4 @@
+# encoding: utf-8
 module CachedJson
   extend ActiveSupport::Concern
 
@@ -10,10 +11,15 @@ module CachedJson
 
   module ClassMethods
   
+    # Define JSON fields for a class.
+    #
+    # @param [ hash ] defs JSON field definition.
+    #
+    # @since 1.0.0
     def json_fields(defs)
       self.hide_as_child_json_when = defs.delete(:hide_as_child_json_when) || lambda { |a| false }
       self.all_json_properties = [:short, :public, :all]
-      cached_json_defs = Hash[defs.map { |k,v| [k, {type: :callable, properties: :short, definition: k }.merge(reparameterize(k, v))] }]
+      cached_json_defs = Hash[defs.map { |k,v| [k, {type: :callable, properties: :short, definition: k }.merge(cached_json_reparameterize(k, v))] }]
       self.cached_json_field_defs = {}
       self.cached_json_reference_defs = {}
       self.all_json_properties.each_with_index do |property, i|
@@ -32,27 +38,14 @@ module CachedJson
       end
       before_save :expire_cached_json
     end
-    
-    def reparameterize(k, v)
-      case v[:markdown]
-      when true
-        v.merge(definition: lambda { |model| 
-          s = model.send(k).to_s
-          s = CachedJson::DownmarkIt.to_markdown(s) if !!(s =~ /\<.*\>/)
-          s
-        })
-      else
-        v
-      end
-    end
 
+    # Given an object definition in the form of either an object or a class, id pair,
+    # grab the as_json representation from the cache if possible, otherwise create
+    # the as_json representation by loading the object from the database. For any
+    # references in the object's JSON representation, we have to recursively materialize
+    # the JSON by calling resolve_json_reference on each of them (which may, in turn,
+    # call materialize_json)
     def materialize_json(options, object_def)
-      # Given an object definition in the form of either an object or a class, id pair,
-      # grab the as_json representation from the cache if possible, otherwise create
-      # the as_json representation by loading the object from the database. For any
-      # references in the object's JSON representation, we have to recursively materialize
-      # the JSON by calling resolve_json_reference on each of them (which may, in turn,
-      # call materialize_json)
       return nil if !object_def[:object] and !object_def[:id]
       is_top_level_json = options[:is_top_level_json] || false
       if object_def[:object]
@@ -85,11 +78,30 @@ module CachedJson
       json
     end
 
+    # Cache key.
+    def cached_json_key(options, cached_class, cached_id)
+      "as_json/#{cached_class}/#{cached_id}/#{options[:properties]}/#{!!options[:is_top_level_json]}"
+    end
+    
+    # Apply conversions, if any.
+    def cached_json_reparameterize(k, v)
+      case v[:markdown]
+      when true
+        v.merge(definition: lambda { |model| 
+          s = model.send(k).to_s
+          s = CachedJson::DownmarkIt.to_markdown(s) if !!(s =~ /\<.*\>/)
+          s
+        })
+      else
+        v
+      end
+    end
+
+    # If the reference is a symbol, we may be lucky and be able to figure out the as_json
+    # representation by the (class, id) pair definition of the reference. That is, we may
+    # be able to load the as_json representation from the cache without even getting the
+    # model from the database and materializing it through Mongoid. We'll try to do this first.
     def resolve_json_reference(options, object, field, reference_def)
-      # If the reference is a symbol, we may be lucky and be able to figure out the as_json
-      # representation by the (class, id) pair definition of the reference. That is, we may
-      # be able to load the as_json representation from the cache without even getting the
-      # model from the database and materializing it through Mongoid. We'll try to do this first.
       reference_json = nil
       if reference_def[:metadata]
         clazz = reference_def[:metadata].class_name.constantize
@@ -111,9 +123,6 @@ module CachedJson
       reference_json
     end
 
-    def cached_json_key(options, cached_class, cached_id)
-      "as_json/#{cached_class}/#{cached_id}/#{options[:properties]}/#{!!options[:is_top_level_json]}"
-    end
   end
 
   def as_json(options={properties: :short})
@@ -122,6 +131,7 @@ module CachedJson
     self.class.materialize_json({is_top_level_json: true}.merge(options), {object: self})
   end
 
+  # Expire all JSON entries for this class.
   def expire_cached_json
     self.all_json_properties.each do |properties|
       [true, false].each do |is_top_level_json|
@@ -131,6 +141,7 @@ module CachedJson
   end    
 
   class << self
+  
     # Set the configuration options. Best used by passing a block.
     #
     # @example Set up configuration options.
