@@ -17,3 +17,5 @@ doc
 # jeweler generated
 pkg
 
+# redcar
+.redcar
