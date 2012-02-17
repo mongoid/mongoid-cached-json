@@ -94,9 +94,7 @@ Mongoid::CachedJson field definitions support the following options.
 Transformations
 ---------------
 
-You can define global transformations on all JSON values with `Mongoid::CachedJson.config.transform`. Each transformation must return the new value.
-
-In the following example we extend the JSON definition with an application-specific `:trusted` field and encode any content that is not trusted.
+You can define global transformations on all JSON values with `Mongoid::CachedJson.config.transform`. Each transformation must return a value. In the following example we extend the JSON definition with an application-specific `:trusted` field and encode any content that is not trusted.
 
 ``` ruby
 class Widget
@@ -111,7 +109,7 @@ class Widget
 end
 ```
 
-``` ruby config/initializers/mongoid-cached-json.rb
+``` ruby
   Mongoid::CachedJson.config.transform do |field, definition, value|
     (!! definition[:trusted]) ? value : CGI.escapeHTML(value)
   end
