@@ -135,4 +135,4 @@ Copyright and License
 
 MIT License, see [LICENSE](LICENSE.md) for details.
 
-(c) 2012 [Art.sy Inc.](http://artsy.github.com) and [Contributors](HISTORY.md)
+(c) 2012 [Art.sy Inc.](http://artsy.github.com) and [Contributors](https://github.com/dblock/mongoid-cached-json/blob/master/HISTORY.md)
