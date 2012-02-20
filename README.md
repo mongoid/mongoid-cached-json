@@ -128,7 +128,7 @@ You can set `Mongoid::CachedJson.config.disable_caching = true`. It may be a goo
 Contributing
 ------------
 
-Fork the project. Make your feature addition or bug fix with tests. Send a pull request. Bonus points for topical branches.
+Fork the project. Make your feature addition or bug fix with tests. Send a pull request. Bonus points for topic branches.
 
 Copyright and License
 ---------------------
