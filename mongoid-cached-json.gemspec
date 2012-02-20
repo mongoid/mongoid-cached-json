@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "mongoid-cached-json"
-  s.version = "0.1.0"
+  s.version = "1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Aaron Windsor", "Daniel Doubrovkine", "Frank Macreery"]
-  s.date = "2012-02-17"
+  s.date = "2012-02-20"
   s.description = "Cached-json is a DSL for describing JSON representations of Mongoid models."
   s.email = "dblock@dblock.org"
   s.extra_rdoc_files = [
@@ -20,7 +20,6 @@ Gem::Specification.new do |s|
     "lib/mongoid-cached-json.rb",
     "lib/mongoid-cached-json/cached_json.rb",
     "lib/mongoid-cached-json/config.rb",
-    "lib/mongoid-cached-json/downmark_it.rb",
     "lib/mongoid-cached-json/version.rb"
   ]
   s.homepage = "http://github.com/dblock/mongoid-cached-json"
