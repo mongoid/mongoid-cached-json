@@ -80,6 +80,30 @@ Mongoid::CachedJson.configure do |config|
 end
 ```
 
+Versionning
+-----------
+
+`Mongoid::CachedJson` supports JSON versionning with `json_fields_for`. The obvious use-case is to return different JSON versions from API v1 and API v2. For example, version 2 of `Widget` splits `name` into `first` and `last`.
+
+``` ruby
+class Widget
+  include Mongoid::CachedJson
+
+  field :first
+  field :last
+
+  json_fields_for :v1 \
+    :name => { :definition => lambda { |instance| "#{instance.first} #{instance.last}" } }
+
+  json_fields_for :v2 \
+    :first => { },
+    :last => { }
+
+end
+```
+
+JSON fields declared with `json_fields` instead of `json_fields_for` are used for all versions.
+
 Definining Fields
 -----------------
 
@@ -116,11 +140,6 @@ end
     (!! definition[:trusted]) ? value : CGI.escapeHTML(value)
   end
 ```
-
-Versionning
------------
-
-TODO
 
 Mixing with Standard as_json
 ----------------------------

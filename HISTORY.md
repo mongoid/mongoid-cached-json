@@ -1,3 +1,7 @@
+1.x
+---
+* 2011/02/21: Added support for multiple versions, [Daniel Doubrovkine](http://github.com/dblock)
+
 1.0
 ---
 

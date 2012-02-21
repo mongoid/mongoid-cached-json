@@ -144,7 +144,7 @@ module Mongoid
       def json_version(version)
         version ||= Mongoid::CachedJson.config.default_version
         raise ArgumentError.new("Missing version") unless version
-        version = self.all_json_properties.keys.first if version == :default and ! self.all_json_properties.has_key?(version)
+        version = self.all_json_properties.keys.sort_by{ |key| key.to_s }.first if version == :default and ! self.all_json_properties.has_key?(version)
         raise ArgumentError.new("Invalid version: #{version} in #{self.name}") unless self.all_json_properties.has_key?(version)
         version
       end
