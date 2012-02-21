@@ -12,3 +12,10 @@ Mongoid.configure do |config|
   config.master = Mongo::Connection.new.db("cached_json_test")
 end
 
+RSpec.configure do |config|
+  config.after :each do
+    Mongoid::CachedJson.config.reset!
+  end
+end
+
+

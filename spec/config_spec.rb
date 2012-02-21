@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Mongoid::CachedJson::Config do
   before :each do
-    @cache= Mongoid::CachedJson::Config.cache
+    @cache = Mongoid::CachedJson::Config.cache
   end
   after :each do
     Mongoid::CachedJson::Config.cache = @cache

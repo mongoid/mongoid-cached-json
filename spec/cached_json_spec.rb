@@ -256,9 +256,6 @@ describe Mongoid::CachedJson do
           value.upcase
         end
       end
-      after :each do
-        Mongoid::CachedJson.config.reset!
-      end
       it "transforms every value in returned JSON" do
         JsonFoobar.new({ :foo => "foo", :bar => "Bar", :baz => "BAZ" }).as_json.should == { "Baz" => "BAZ", :default_foo => "DEFAULT_FOO", :foo => "FOO" }
       end
@@ -268,9 +265,6 @@ describe Mongoid::CachedJson do
         Mongoid::CachedJson.config.transform do |field, definition, value|
           definition[:transform] ? value.send(definition[:transform].to_sym) : value
         end
-      end
-      after :each do
-        Mongoid::CachedJson.config.reset!
       end
       it "transforms every value in returned JSON using the :transform attribute" do
         JsonTransform.new({ :upcase => "upcase", :downcase => "DOWNCASE", :nochange => "eLiTe" }).as_json.should == { :upcase => "UPCASE", :downcase => "downcase", :nochange => "eLiTe" }
@@ -285,9 +279,6 @@ describe Mongoid::CachedJson do
           value.to_i / 2
         end
       end
-      after :each do
-        Mongoid::CachedJson.config.reset!
-      end
       it "transforms every value in returned JSON using the :transform attribute" do
         JsonMath.new({ :number => 9 }).as_json.should == { :number => 5 }
       end
@@ -299,12 +290,25 @@ describe Mongoid::CachedJson do
     end
     it "forces a cache miss" do
       example = JsonFoobar.create({ :foo => "FOO", :baz => "BAZ", :bar => "BAR" })
-      Mongoid::CachedJson.config.cache.should_receive(:fetch).with("as_json/JsonFoobar/#{example.id}/short/true", { :force => true }).twice
-      example.as_json
-      example.as_json
+      Mongoid::CachedJson.config.cache.should_receive(:fetch).with("as_json/default/JsonFoobar/#{example.id}/short/true", { :force => true }).twice
+      2.times { example.as_json }
     end
-    after :each do
-      Mongoid::CachedJson.config.reset!
+  end
+  context "with multiple versions" do
+    it "raises an error for as_json with an invalid version" do
+      example = JsonFoobar.create(foo: "FOO", baz: "BAZ", bar: "BAR")
+      lambda { example.as_json(properties: :short, version: :invalid) }.should raise_error(ArgumentError, "Invalid version: invalid in JsonFoobar")
+    end
+    context "version 2" do
+      it "returns JSON for version 2" do
+        example = JsonFoobar.create(foo: "FOO", baz: "BAZ", bar: "BAR")
+        example.as_json(properties: :short, version: :v2).should == { foo_that_is_baz: "BAZ" }
+      end
+      it "returns JSON for the default version" do
+        Mongoid::CachedJson.config.default_version = :v2
+        example = JsonFoobar.create(foo: "FOO", baz: "BAZ", bar: "BAR")
+        example.as_json(properties: :short).should == { foo_that_is_baz: "BAZ" }
+      end
     end
   end
 end

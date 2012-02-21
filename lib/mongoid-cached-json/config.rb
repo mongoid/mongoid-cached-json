@@ -1,11 +1,16 @@
 # encoding: utf-8
-module Mongoid
-  module CachedJson #:nodoc
+module Mongoid 
+  module CachedJson 
     module Config
       extend self
       include ActiveSupport::Callbacks
   
-      attr_accessor :settings, :defaults
+      # Current configuration settings.
+      attr_accessor :settings
+      
+      # Default configuration settings.
+      attr_accessor :defaults
+      
       @settings = {}
       @defaults = {}
   
@@ -36,7 +41,29 @@ module Mongoid
         RUBY
       end
       
+      # Disable caching.
       option :disable_caching, { :default => false }
+      
+      # Returns the default JSON version
+      #
+      # @example Get the default JSON version
+      #   config.default_version
+      #
+      # @return [ Version ] The default JSON version.
+      def default_version
+        settings[:default_version] = :default unless settings.has_key?(:default_version)
+        settings[:default_version]
+      end
+
+      # Sets the default JSON version.
+      #
+      # @example Set the default version.
+      #   config.default_version = :v2
+      #
+      # @return [ Version ] The newly set default version.
+      def default_version=(default_version)
+        settings[:default_version] = default_version
+      end
       
       # Returns the default cache store, which is either a Rails logger of stdout logger
       #
