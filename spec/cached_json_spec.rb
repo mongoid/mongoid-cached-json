@@ -296,18 +296,18 @@ describe Mongoid::CachedJson do
   end
   context "with multiple versions" do
     it "raises an error for as_json with an invalid version" do
-      example = JsonFoobar.create(foo: "FOO", baz: "BAZ", bar: "BAR")
-      lambda { example.as_json(properties: :short, version: :invalid) }.should raise_error(ArgumentError, "Invalid version: invalid in JsonFoobar")
+      example = JsonFoobar.create(:foo => "FOO", :baz => "BAZ", :bar => "BAR")
+      lambda { example.as_json(:properties => :short, :version => :invalid) }.should raise_error(ArgumentError, "Invalid version: invalid in JsonFoobar")
     end
     context "version 2" do
       it "returns JSON for version 2" do
-        example = JsonFoobar.create(foo: "FOO", baz: "BAZ", bar: "BAR")
-        example.as_json(properties: :short, version: :v2).should == { foo_that_is_baz: "BAZ" }
+        example = JsonFoobar.create(:foo => "FOO", :baz => "BAZ", :bar => "BAR")
+        example.as_json(:properties => :short, :version => :v2).should == { :foo_that_is_baz => "BAZ" }
       end
       it "returns JSON for the default version" do
         Mongoid::CachedJson.config.default_version = :v2
-        example = JsonFoobar.create(foo: "FOO", baz: "BAZ", bar: "BAR")
-        example.as_json(properties: :short).should == { foo_that_is_baz: "BAZ" }
+        example = JsonFoobar.create(:foo => "FOO", :baz => "BAZ", :bar => "BAR")
+        example.as_json(:properties => :short).should == { :foo_that_is_baz => "BAZ" }
       end
     end
   end

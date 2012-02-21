@@ -16,7 +16,7 @@ class JsonFoobar
     :computed_field => { :properties => :all, :definition => lambda { |x| x.foo + x.bar } }
 
   json_fields_for :v2,
-    foo_that_is_baz: { definition: :baz }    
+    :foo_that_is_baz => { :definition => :baz }    
 
 end
 
