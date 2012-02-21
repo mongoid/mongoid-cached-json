@@ -133,6 +133,6 @@ Fork the project. Make your feature addition or bug fix with tests. Send a pull 
 Copyright and License
 ---------------------
 
-MIT License, see [LICENSE](LICENSE.md) for details.
+MIT License, see [LICENSE](https://github.com/dblock/mongoid-cached-json/blob/master/LICENSE.md) for details.
 
 (c) 2012 [Art.sy Inc.](http://artsy.github.com) and [Contributors](https://github.com/dblock/mongoid-cached-json/blob/master/HISTORY.md)
