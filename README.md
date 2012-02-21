@@ -5,6 +5,8 @@ Typical *as_json* definitions may involve lots of database point queries and met
 
 CachedJson enables returning multiple JSON formats from a single class and provides some rules for returning embedded or referenced data. It then uses a scheme where fragments of JSON are cached for a particular (class, id) pair containing only the data that doesn't involve references/embedded documents. To get the full JSON for an instance, CachedJson will combine fragments of JSON from the instance with fragments representing the JSON for its references. In the best case, when all of these fragments are cached, this falls through to a few cache lookups followed by a couple Ruby hash merges to create the JSON.
 
+CachedJson also supports JSON versionning.
+
 Using Mongoid::CachedJson we were able to cut our JSON API average response time by about a factor of 10.
 
 Resources
@@ -77,6 +79,30 @@ Mongoid::CachedJson.configure do |config|
   config.cache = ActiveSupport::Cache::FileStore.new
 end
 ```
+
+Versionning
+-----------
+
+`Mongoid::CachedJson` supports JSON versionning with `json_fields_for`. The obvious use-case is to return different JSON versions from API v1 and API v2. For example, version 2 of `Widget` splits `name` into `first` and `last`.
+
+``` ruby
+class Widget
+  include Mongoid::CachedJson
+
+  field :first
+  field :last
+
+  json_fields_for :v1 \
+    :name => { :definition => lambda { |instance| "#{instance.first} #{instance.last}" } }
+
+  json_fields_for :v2 \
+    :first => { },
+    :last => { }
+
+end
+```
+
+JSON fields declared with `json_fields` instead of `json_fields_for` are used for all versions.
 
 Definining Fields
 -----------------
