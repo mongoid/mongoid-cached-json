@@ -10,10 +10,12 @@ class JsonFoobar
   json_fields \
     :foo => { :properties => :short },
     :bar => { :properties => :public },
-    "Baz" => { :definition => :baz },
+    "Baz" => { :definition => :baz, :versions => [ :default ] },
+    "Taz" => { :definition => :baz, :version => :v2 },
+    "Naz" => { :definition => :baz, :versions => [ :v2, :v3 ] },
     :renamed_baz => { :properties => :all, :definition => :baz },
     :default_foo => { }, # default value for properties is :short
     :computed_field => { :properties => :all, :definition => lambda { |x| x.foo + x.bar } }
-    
+
 end
 
