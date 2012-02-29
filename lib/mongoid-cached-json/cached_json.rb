@@ -26,7 +26,7 @@ module Mongoid
         self.cached_json_reference_defs = {}
         # Collect all versions for clearing cache
         self.all_json_versions = cached_json_defs.map do |field, definition|
-          [ Mongoid::CachedJson.config.default_version, definition[:version], Array(definition[:versions]) ]
+          [ :unspecified, definition[:version], Array(definition[:versions]) ]
         end.flatten.compact.uniq
         self.all_json_properties.each_with_index do |property, i|
           self.cached_json_field_defs[property] = Hash[cached_json_defs.find_all do |field, definition|
@@ -124,10 +124,13 @@ module Mongoid
   
     end
   
-    def as_json(options = { :properties => :short })
-      raise ArgumentError.new("Missing options[:properties]") if (options.nil? || options[:properties].nil?)
-      raise ArgumentError.new("Unknown properties option: #{options[:properties]}") if !self.all_json_properties.member?(options[:properties])
-      self.class.materialize_json({ :is_top_level_json => true, :version => Mongoid::CachedJson.config.default_version }.merge(options), { :object => self })
+    def as_json(options = {})
+      if options[:properties] and ! self.all_json_properties.member?(options[:properties])
+        raise ArgumentError.new("Unknown properties option: #{options[:properties]}")
+      end
+      self.class.materialize_json({ 
+        :properties => :short, :is_top_level_json => true, :version => Mongoid::CachedJson.config.default_version 
+      }.merge(options), { :object => self })
     end
   
     # Expire all JSON entries for this class.

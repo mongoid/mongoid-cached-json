@@ -10,7 +10,7 @@ class JsonFoobar
   json_fields \
     :foo => { :properties => :short },
     :bar => { :properties => :public },
-    "Baz" => { :definition => :baz, :versions => [ :default ] },
+    "Baz" => { :definition => :baz, :version => :unspecified },
     "Taz" => { :definition => :baz, :version => :v2 },
     "Naz" => { :definition => :baz, :versions => [ :v2, :v3 ] },
     :renamed_baz => { :properties => :all, :definition => :baz },

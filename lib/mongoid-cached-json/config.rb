@@ -51,7 +51,7 @@ module Mongoid
       #
       # @return [ Version ] The default JSON version.
       def default_version
-        settings[:default_version] = :default unless settings.has_key?(:default_version)
+        settings[:default_version] = :unspecified unless settings.has_key?(:default_version)
         settings[:default_version]
       end
 
