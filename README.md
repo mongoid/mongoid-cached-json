@@ -142,7 +142,7 @@ You can define global transformations on all JSON values with `Mongoid::CachedJs
 
 ``` ruby
 class Widget
-  include Monogid::Document
+  include Mongoid::Document
   include Mongoid::CachedJson
 
   field :name
