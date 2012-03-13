@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "mongoid-cached-json"
-  s.version = "1.0"
+  s.version = "1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Aaron Windsor", "Daniel Doubrovkine", "Frank Macreery"]
