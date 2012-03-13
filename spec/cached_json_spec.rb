@@ -16,8 +16,8 @@ describe Mongoid::CachedJson do
     it "throws an error if you ask for an undefined property type" do
       lambda { JsonFoobar.create.as_json({ :properties => :special }) }.should raise_error(ArgumentError)
     end
-    it "throws an error if you don't specify properties" do
-      lambda { JsonFoobar.create.as_json({ }) }.should raise_error(ArgumentError)
+    it "does not raise an error if you don't specify properties" do
+      lambda { JsonFoobar.create.as_json({ }) }.should_not raise_error
     end
     it "should hit the cache for subsequent as_json calls after the first" do
       foobar = JsonFoobar.create({ :foo => "FOO", :bar => "BAR", :baz => "BAZ" })
@@ -256,9 +256,6 @@ describe Mongoid::CachedJson do
           value.upcase
         end
       end
-      after :each do
-        Mongoid::CachedJson.config.reset!
-      end
       it "transforms every value in returned JSON" do
         JsonFoobar.new({ :foo => "foo", :bar => "Bar", :baz => "BAZ" }).as_json.should == { "Baz" => "BAZ", :default_foo => "DEFAULT_FOO", :foo => "FOO" }
       end
@@ -268,9 +265,6 @@ describe Mongoid::CachedJson do
         Mongoid::CachedJson.config.transform do |field, definition, value|
           definition[:transform] ? value.send(definition[:transform].to_sym) : value
         end
-      end
-      after :each do
-        Mongoid::CachedJson.config.reset!
       end
       it "transforms every value in returned JSON using the :transform attribute" do
         JsonTransform.new({ :upcase => "upcase", :downcase => "DOWNCASE", :nochange => "eLiTe" }).as_json.should == { :upcase => "UPCASE", :downcase => "downcase", :nochange => "eLiTe" }
@@ -285,9 +279,6 @@ describe Mongoid::CachedJson do
           value.to_i / 2
         end
       end
-      after :each do
-        Mongoid::CachedJson.config.reset!
-      end
       it "transforms every value in returned JSON using the :transform attribute" do
         JsonMath.new({ :number => 9 }).as_json.should == { :number => 5 }
       end
@@ -299,12 +290,34 @@ describe Mongoid::CachedJson do
     end
     it "forces a cache miss" do
       example = JsonFoobar.create({ :foo => "FOO", :baz => "BAZ", :bar => "BAR" })
-      Mongoid::CachedJson.config.cache.should_receive(:fetch).with("as_json/JsonFoobar/#{example.id}/short/true", { :force => true }).twice
+      Mongoid::CachedJson.config.cache.should_receive(:fetch).with("as_json/unspecified/JsonFoobar/#{example.id}/short/true", { :force => true }).twice
       example.as_json
       example.as_json
     end
-    after :each do
-      Mongoid::CachedJson.config.reset!
+  end
+  context "versioning" do
+    it "returns JSON for version 2" do
+      example = JsonFoobar.create(:foo => "FOO", :baz => "BAZ", :bar => "BAR")
+      example.as_json({ :properties => :short, :version => :v2 }).should == { :foo => "FOO", "Taz" => "BAZ", "Naz" => "BAZ", :default_foo => "DEFAULT_FOO" }
+    end
+    it "returns JSON for version 3" do
+      example = JsonFoobar.create(:foo => "FOO", :baz => "BAZ", :bar => "BAR")
+      example.as_json({ :properties => :short, :version => :v3 }).should == { :foo => "FOO", "Naz" => "BAZ", :default_foo => "DEFAULT_FOO" }
+    end
+    it "returns default JSON for version 4 that hasn't been declared" do
+      example = JsonFoobar.create(:foo => "FOO", :baz => "BAZ", :bar => "BAR")
+      example.as_json({ :properties => :short, :version => :v4 }).should == { :foo => "FOO", :default_foo => "DEFAULT_FOO" }
+    end
+    it "returns JSON for the default version" do
+      Mongoid::CachedJson.config.default_version = :v2
+      example = JsonFoobar.create(:foo => "FOO", :baz => "BAZ", :bar => "BAR")
+      example.as_json({ :properties => :short }).should == { :foo => "FOO", "Taz" => "BAZ", "Naz" => "BAZ", :default_foo => "DEFAULT_FOO" }
+    end
+    it "returns correct JSON for Person used in README" do
+      person = Person.create({ :first => "John", :middle => "F.", :last => "Kennedy", :born => "May 29, 1917" })
+      person.as_json.should == { :name => "John F. Kennedy" }
+      person.as_json({ :version => :v2 }).should == { :first => "John", :middle => "F.", :last => "Kennedy", :name => "John F. Kennedy" }
+      person.as_json({ :version => :v3 }).should == { :first => "John", :middle => "F.", :last => "Kennedy", :name => "John F. Kennedy", :born => "May 29, 1917" }
     end
   end
 end

@@ -3,7 +3,7 @@ Mongoid::CachedJson [![Build Status](https://secure.travis-ci.org/dblock/mongoid
 
 Typical *as_json* definitions may involve lots of database point queries and method calls. When returning collections of objects, a single call may yield hundreds of database queries that can take seconds. This library mitigates the problem by implementing a module called *CachedJson*.
 
-CachedJson enables returning multiple JSON formats from a single class and provides some rules for returning embedded or referenced data. It then uses a scheme where fragments of JSON are cached for a particular (class, id) pair containing only the data that doesn't involve references/embedded documents. To get the full JSON for an instance, CachedJson will combine fragments of JSON from the instance with fragments representing the JSON for its references. In the best case, when all of these fragments are cached, this falls through to a few cache lookups followed by a couple Ruby hash merges to create the JSON.
+CachedJson enables returning multiple JSON formats and versions from a single class and provides some rules for returning embedded or referenced data. It then uses a scheme where fragments of JSON are cached for a particular (class, id) pair containing only the data that doesn't involve references/embedded documents. To get the full JSON for an instance, CachedJson will combine fragments of JSON from the instance with fragments representing the JSON for its references. In the best case, when all of these fragments are cached, this falls through to a few cache lookups followed by a couple Ruby hash merges to create the JSON.
 
 Using Mongoid::CachedJson we were able to cut our JSON API average response time by about a factor of 10.
 
@@ -78,6 +78,14 @@ Mongoid::CachedJson.configure do |config|
 end
 ```
 
+The default JSON version returned from `as_json` is `:unspecified`. If you wish to redefine this, set `Mongoid::CachedJson.config.default_version`.
+
+``` ruby
+Mongoid::CachedJson.configure do |config|
+  config.default_version = :v2
+end
+```
+
 Definining Fields
 -----------------
 
@@ -90,6 +98,42 @@ Mongoid::CachedJson field definitions support the following options.
 * `:definition` can be a symbol or an anonymous function, eg. `:description => { :definition => :name }` or `:description => { :definition => lambda { |instance| instance.name } }`
 * `:type` can be `:reference`, required for referenced objects
 * `:properties` can be one of `:short`, `:public`, `:all`, in this order
+* `:version` can be a single version for this field to appear in
+* `:versions` can be an array of versions for this field to appear in
+
+Versioning
+----------
+
+You can set an optional `version` or `versions` attribute on JSON fields. Consider the following definition where the first version defined `:name`, then split it into `:first`, `:middle` and `:last` in version `:v2` and introduced a date of birth in `:v3`.
+
+``` ruby
+class Person
+  include Mongoid::Document
+  include Mongoid::CachedJson
+
+  field :first
+  field :last
+
+  def name
+    [ first, middle, last ].compact.join(" ")
+  end
+
+  json_fields \
+    :first => { :versions => [ :v2, :v3 ] },
+    :last => { :versions => [ :v2, :v3 ] },
+    :middle => { :versions => [ :v2, :v3 ] },
+    :born => { :versions => :v3 },
+    :name => { :definition => :name }
+
+end
+```
+
+``` ruby
+person = Person.create({ :first => "John", :middle => "F.", :last => "Kennedy", :born => "May 29, 1917" })
+person.as_json # { :name => "John F. Kennedy" }
+person.as_json({ :version => :v2 }) # { :first => "John", :middle => "F.", :last => "Kennedy", :name => "John F. Kennedy" }
+person.as_json({ :version => :v3 }) # { :first => "John", :middle => "F.", :last => "Kennedy", :name => "John F. Kennedy", :born => "May 29, 1917" }
+```
 
 Transformations
 ---------------
@@ -98,6 +142,7 @@ You can define global transformations on all JSON values with `Mongoid::CachedJs
 
 ``` ruby
 class Widget
+  include Mongoid::Document
   include Mongoid::CachedJson
 
   field :name
