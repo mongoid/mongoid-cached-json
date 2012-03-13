@@ -86,8 +86,8 @@ Mongoid::CachedJson.configure do |config|
 end
 ```
 
-Definining Fields
------------------
+Defining Fields
+---------------
 
 Mongoid::CachedJson supports the following options.
 
