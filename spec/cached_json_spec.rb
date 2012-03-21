@@ -320,5 +320,36 @@ describe Mongoid::CachedJson do
       person.as_json({ :version => :v3 }).should == { :first => "John", :middle => "F.", :last => "Kennedy", :name => "John F. Kennedy", :born => "May 29, 1917" }
     end
   end
+  context "polymorphic objects" do
+    before(:each) do
+      @json_embedded_foobar = JsonEmbeddedFoobar.new(:foo => "embedded")
+      @json_referenced_foobar = JsonReferencedFoobar.new(:foo => "referenced")
+      @json_parent_foobar = JsonParentFoobar.create({
+        :json_polymorphic_embedded_foobar => @json_embedded_foobar, 
+        :json_polymorphic_referenced_foobar => @json_referenced_foobar
+      })
+      @json_referenced_foobar.json_parent_foobar = @json_parent_foobar
+      @json_referenced_foobar.save!
+
+      # Cache...
+      [:all, :short, :public].each do |prop|
+        @json_parent_foobar.as_json(:properties => prop)
+      end
+    end
+    it "returns correct JSON when a child (embedded) polymorphic document is changed" do
+      @json_parent_foobar.as_json(:properties => :all)[:json_polymorphic_embedded_foobar][:foo].should == "embedded"
+      @json_embedded_foobar.as_json(:properties => :all)[:foo].should == "embedded"
+      @json_embedded_foobar.update_attributes!(:foo => "EMBEDDED")
+      @json_embedded_foobar.as_json(:properties => :all)[:foo].should == "EMBEDDED"
+      @json_parent_foobar.as_json(:properties => :all)[:json_polymorphic_embedded_foobar][:foo].should == "EMBEDDED"
+    end
+    it "returns correct JSON when a child (referenced) polymorphic document is changed" do
+      @json_parent_foobar.as_json(:properties => :all)[:json_polymorphic_referenced_foobar][:foo].should == "referenced"
+      @json_referenced_foobar.as_json(:properties => :all)[:foo].should == "referenced"
+      @json_referenced_foobar.update_attributes!(:foo => "REFERENCED")
+      @json_referenced_foobar.as_json(:properties => :all)[:foo].should == "REFERENCED"
+      @json_parent_foobar.as_json(:properties => :all)[:json_polymorphic_referenced_foobar][:foo].should == "REFERENCED"
+    end
+  end
 end
 
