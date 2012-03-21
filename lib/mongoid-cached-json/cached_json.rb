@@ -93,7 +93,8 @@ module Mongoid
   
       # Cache key.
       def cached_json_key(options, cached_class, cached_id)
-        "as_json/#{options[:version]}/#{cached_class}/#{cached_id}/#{options[:properties]}/#{!!options[:is_top_level_json]}"
+        base_class_name = cached_class.collection_name.singularize.camelize
+        "as_json/#{options[:version]}/#{base_class_name}/#{cached_id}/#{options[:properties]}/#{!!options[:is_top_level_json]}"
       end
 
       # If the reference is a symbol, we may be lucky and be able to figure out the as_json
