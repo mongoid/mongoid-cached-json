@@ -1,5 +1,7 @@
 1.x
 ---
+
+* 2012/03/21: Fixed a bug in caching/invalidating referenced polymorphic documents, [Frank Macreery](http://github.com/macreery)
 * 2012/02/29: Added support for versioning, [Daniel Doubrovkine](http://github.com/dblock)
 
 1.0
