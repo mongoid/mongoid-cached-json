@@ -1,4 +1,4 @@
-1.x
+1.1
 ---
 
 * 2012/03/21: Fixed a bug in caching/invalidating referenced polymorphic documents, [Frank Macreery](http://github.com/macreery)
