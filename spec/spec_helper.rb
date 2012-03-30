@@ -13,6 +13,7 @@ Mongoid.configure do |config|
 end
 
 RSpec.configure do |config|
+  config.include CachedJsonMatchers
   config.after :each do
     Mongoid::CachedJson.config.reset!
   end

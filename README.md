@@ -160,6 +160,64 @@ end
   end
 ```
 
+Testing JSON
+------------
+
+This library overrides `as_json`, hence testing JSON results can be done at model level.
+
+``` ruby
+describe "as_json" do
+  before :each do
+    @person = Person.create!({ :first => "John", :last => "Doe" })
+  end
+  it "returns name" do
+    @person.as_json({ :properties => :public })[:name].should== "John Doe"
+  end
+end
+```
+
+It's also common to test the results of the API using the [Pathy](https://github.com/twoism/pathy) library.
+
+``` ruby
+describe "as_json" do
+  before :each do
+    person = Person.create!({ :first => "John", :last => "Doe" })
+  end
+  it "returns name" do
+    get "/api/person/#{person.id}"
+    response.body.at_json_path("name").should == "John Doe"
+  end
+end
+```
+
+Testing Cache Invalidation
+--------------------------
+
+Cache is invalidated by calling `:expire_cached_json` on an instance.
+
+``` ruby
+describe "updating a person" do
+  before :each
+    @person = Person.create!({ :name => "John Doe" })
+  end
+  it "invalidates cache" do
+    @person.should_receive :expire_cached_json
+    @person.update_attributes!({ :name => "updated" }
+  end
+end
+```
+You may also want to use [this RSpec matcher](https://github.com/dblock/mongoid-cached-json/blob/master/spec/support/matchers/invalidate.rb).
+
+```ruby
+describe "updating a person" do
+  it "invalidates cache" do
+    lambda { 
+      @person.update_attributes!({ :name => "updated" }
+    }.should invalidate @person
+  end
+end
+```
+
 Mixing with Standard as_json
 ----------------------------
 

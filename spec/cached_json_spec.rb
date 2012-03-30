@@ -46,6 +46,12 @@ describe Mongoid::CachedJson do
       3.times { foobar.as_json({ :properties => :public }).should == public_result.merge({ :foo => "foo" }) }
       3.times { foobar.as_json({ :properties => :short }).should == short_result.merge({ :foo => "foo" }) }
     end
+    it "should invalidate cache when a model is saved" do
+      foobar = JsonFoobar.create(:foo => "FOO")
+      lambda {
+        foobar.update_attributes(:foo => "BAR")
+      }.should invalidate foobar
+    end
   end
   context "many-to-one relationships" do
     it "uses the correct properties on the base object and passes :short or :all as appropriate" do
