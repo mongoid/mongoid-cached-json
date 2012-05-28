@@ -1,4 +1,4 @@
-1.1.2
+1.2.0
 -----
 
 * 2012/05/28: Fixed cache key generation bug when using Mongoid 3, [Marc MacLeod](http://github.com/marbemac)
