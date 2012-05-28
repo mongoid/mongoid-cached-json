@@ -1,4 +1,10 @@
+1.1.2
+-----
+
+* 2012/05/28: Fixed cache key generation bug when using Mongoid 3, [Marc MacLeod](http://github.com/marbemac)
+
 1.1.1
+-----
 
 * 2012/03/21: Fixed a bug in caching/invalidating referenced polymorphic documents, [Frank Macreery](http://github.com/macreery)
 
