@@ -357,5 +357,11 @@ describe Mongoid::CachedJson do
       @json_parent_foobar.as_json(:properties => :all)[:json_polymorphic_referenced_foobar][:foo].should == "REFERENCED"
     end
   end
+  context "cache key" do
+    it "correctly generates a cached json key" do
+      example = JsonFoobar.create(:foo => "FOO", :baz => "BAZ", :bar => "BAR")
+      JsonFoobar.cached_json_key({:properties => :short, :is_top_level_json => true, :version => :v1}, example.class, example.id).should == "as_json/v1/JsonFoobar/#{example.id.to_s}/short/true"
+    end
+  end
 end
 
