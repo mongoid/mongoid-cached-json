@@ -1,23 +1,27 @@
-1.2.0
------
+1.2.1 (6/12/2012)
+-----------------
 
-* 2012/05/28: Fixed cache key generation bug when using Mongoid 3, [Marc MacLeod](http://github.com/marbemac)
+* Allow `nil` parameter in as_json, [Daniel Doubrovkine](http://github.com/dblock)
 
-1.1.1
------
+1.2.0 (5/28/2012)
+------------------
 
-* 2012/03/21: Fixed a bug in caching/invalidating referenced polymorphic documents, [Frank Macreery](http://github.com/macreery)
+* Fixed cache key generation bug when using Mongoid 3, [Marc MacLeod](http://github.com/marbemac)
 
-1.1
----
+1.1.1 (3/21/2012)
+-----------------
 
-* 2012/02/29: Added support for versioning, [Daniel Doubrovkine](http://github.com/dblock)
+* Fixed a bug in caching/invalidating referenced polymorphic documents, [Frank Macreery](http://github.com/macreery)
 
-1.0
----
+1.1 (2/29/2012)
+---------------
 
-* 2011/11/15: Initial implementation, [Aaron Windsor](http://github.com/aaw)
-* 2011/11/29: Added support for `:markdown`, [Frank Macreery](http://github.com/macreery)
-* 2012/02/17: Added `Mongoid::CachedJson::configure`, [Daniel Doubrovkine](http://github.com/dblock)
-* 2012/02/17: Retired support for `:markdown` in favor of `Mongoid::CachedJson::transform`, [Daniel Doubrovkine](http://github.com/dblock)
-* 2012/02/20: Initial public release
+* Added support for versioning, [Daniel Doubrovkine](http://github.com/dblock)
+
+1.0 (2/20/2012)
+---------------
+
+* Initial release, [Aaron Windsor](http://github.com/aaw)
+* Retired support for `:markdown` in favor of `Mongoid::CachedJson::transform`, [Daniel Doubrovkine](http://github.com/dblock)
+* Added `Mongoid::CachedJson::configure`, [Daniel Doubrovkine](http://github.com/dblock)
+* Added support for `:markdown`, [Frank Macreery](http://github.com/macreery)
