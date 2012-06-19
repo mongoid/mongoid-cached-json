@@ -6,6 +6,10 @@ describe Mongoid::CachedJson do
     Mongoid::CachedJson::VERSION.to_f.should > 0
   end
   context "with basic fields defined for export with json_fields" do
+    it "returns public JSON if you nil options" do
+      example = JsonFoobar.create({ :foo => "FOO", :baz => "BAZ", :bar => "BAR" })
+      example.as_json(nil).should == example.as_json({ :properties => :short })
+    end
     it "allows subsets of fields to be returned by varying the properties definition" do
       example = JsonFoobar.create({ :foo => "FOO", :baz => "BAZ", :bar => "BAR" })
       # :short is a subset of the fields in :public and :public is a subset of the fields in :all
@@ -331,7 +335,7 @@ describe Mongoid::CachedJson do
       @json_embedded_foobar = JsonEmbeddedFoobar.new(:foo => "embedded")
       @json_referenced_foobar = JsonReferencedFoobar.new(:foo => "referenced")
       @json_parent_foobar = JsonParentFoobar.create({
-        :json_polymorphic_embedded_foobar => @json_embedded_foobar, 
+        :json_polymorphic_embedded_foobar => @json_embedded_foobar,
         :json_polymorphic_referenced_foobar => @json_referenced_foobar
       })
       @json_referenced_foobar.json_parent_foobar = @json_parent_foobar

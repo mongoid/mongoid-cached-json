@@ -126,11 +126,12 @@ module Mongoid
     end
   
     def as_json(options = {})
+      options ||= {}
       if options[:properties] and ! self.all_json_properties.member?(options[:properties])
         raise ArgumentError.new("Unknown properties option: #{options[:properties]}")
       end
-      self.class.materialize_json({ 
-        :properties => :short, :is_top_level_json => true, :version => Mongoid::CachedJson.config.default_version 
+      self.class.materialize_json({
+        :properties => :short, :is_top_level_json => true, :version => Mongoid::CachedJson.config.default_version
       }.merge(options), { :object => self })
     end
   
