@@ -65,7 +65,7 @@ module Mongoid
         settings[:default_version] = default_version
       end
       
-      # Returns the default cache store, which is either a Rails logger of stdout logger
+      # Returns the default cache store, for example Rails cache or an instance of ActiveSupport::Cache::MemoryStore.
       #
       # @example Get the default cache store
       #   config.default_cache
@@ -75,7 +75,7 @@ module Mongoid
         defined?(Rails) && Rails.respond_to?(:cache) ? Rails.cache : ::ActiveSupport::Cache::MemoryStore.new
       end
   
-      # Returns the cache, or defaults to Rails cache or ActiveSupport::Cache::MemoryStore logger.
+      # Returns the cache, or defaults to Rails cache when running under Rails or ActiveSupport::Cache::MemoryStore.
       #
       # @example Get the cache.
       #   config.cache
