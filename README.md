@@ -1,11 +1,11 @@
 Mongoid::CachedJson [![Build Status](https://secure.travis-ci.org/dblock/mongoid-cached-json.png)](http://travis-ci.org/dblock/mongoid-cached-json)
 ===================
 
-Typical *as_json* definitions may involve lots of database point queries and method calls. When returning collections of objects, a single call may yield hundreds of database queries that can take seconds. This library mitigates the problem by implementing a module called *CachedJson*.
+Typical `as_json` definitions may involve lots of database point queries and method calls. When returning collections of objects, a single call may yield hundreds of database queries that can take seconds. This library mitigates the problem by implementing a module called `CachedJson`.
 
-CachedJson enables returning multiple JSON formats and versions from a single class and provides some rules for returning embedded or referenced data. It then uses a scheme where fragments of JSON are cached for a particular (class, id) pair containing only the data that doesn't involve references/embedded documents. To get the full JSON for an instance, CachedJson will combine fragments of JSON from the instance with fragments representing the JSON for its references. In the best case, when all of these fragments are cached, this falls through to a few cache lookups followed by a couple Ruby hash merges to create the JSON.
+`CachedJson` enables returning multiple JSON formats and versions from a single class and provides some rules for yielding embedded or referenced data. It then uses a scheme where fragments of JSON are cached for a particular (class, id) pair containing only the data that doesn't involve references/embedded documents. To get the full JSON for an instance, `CachedJson` will combine fragments of JSON from the instance with fragments representing the JSON for its references. In the best case, when all of these fragments are cached, this falls through to a few cache lookups followed by a couple Ruby hash merges to create the JSON.
 
-Using Mongoid::CachedJson we were able to cut our JSON API average response time by about a factor of 10.
+Using `Mongoid::CachedJson` we were able to cut our JSON API average response time by about a factor of 10.
 
 Resources
 ---------
@@ -54,17 +54,19 @@ end
 Invoke `as_json`.
 
 ``` ruby
+widget = Widget.first
+
 # the `:short` version of the JSON, `gadgets` not included
-Widget.first.as_json
+widget.as_json
 
 # equivalent to the above
-Widget.first.as_json({ :properties => :short })
+widget.as_json({ :properties => :short })
 
 # `:public` version of the JSON, `gadgets` returned with `:short` JSON, no `:extras`
-Widget.first.as_json({ :properties => :public })
+widget.as_json({ :properties => :public })
 
 # `:all` version of the JSON, `gadgets` returned with `:all` JSON, including `:extras`
-Widget.first.as_json({ :properties => :all })
+widget.as_json({ :properties => :all })
 ```
 
 Configuration
@@ -89,11 +91,11 @@ end
 Defining Fields
 ---------------
 
-Mongoid::CachedJson supports the following options.
+`Mongoid::CachedJson` supports the following options:
 
 * `:hide_as_child_json_when` is an optional function that hides the child JSON from `as_json` parent objects, eg. `cached_json :hide_as_child_json_when => lambda { |instance| ! instance.is_secret? }`
 
-Mongoid::CachedJson field definitions support the following options.
+`Mongoid::CachedJson` field definitions support the following options:
 
 * `:definition` can be a symbol or an anonymous function, eg. `:description => { :definition => :name }` or `:description => { :definition => lambda { |instance| instance.name } }`
 * `:type` can be `:reference`, required for referenced objects
@@ -156,14 +158,15 @@ end
 
 ``` ruby
   Mongoid::CachedJson.config.transform do |field, definition, value|
-    (!! definition[:trusted]) ? value : CGI.escapeHTML(value)
+    trusted = !! definition[:trusted]
+    trusted ? value : CGI.escapeHTML(value)
   end
 ```
 
 Mixing with Standard as_json
 ----------------------------
 
-Taking part in the Mongoid::CachedJson `json_fields` scheme is optional: you can still write *as_json* methods where it makes sense.
+Taking part in the `Mongoid::CachedJson` `json_fields` scheme is optional: you can still write `as_json` methods where it makes sense.
 
 Turning Caching Off
 -------------------
@@ -181,7 +184,7 @@ describe "as_json" do
     @person = Person.create!({ :first => "John", :last => "Doe" })
   end
   it "returns name" do
-    @person.as_json({ :properties => :public })[:name].should== "John Doe"
+    @person.as_json({ :properties => :public })[:name].should == "John Doe"
   end
 end
 ```
@@ -239,3 +242,4 @@ Copyright and License
 MIT License, see [LICENSE](https://github.com/dblock/mongoid-cached-json/blob/master/LICENSE.md) for details.
 
 (c) 2012 [Art.sy Inc.](http://artsy.github.com) and [Contributors](https://github.com/dblock/mongoid-cached-json/blob/master/HISTORY.md)
+

@@ -1,7 +1,7 @@
 1.2.2 (7/3/2012)
 ----------------
 
-* Fix [#6](https://github.com/dblock/mongoid-cached-json/issues/6): including parent in `as_json` within a polymorphic reference fails with an "uninitialized constant" error, [Daniel Doubrovkine](http://github.com/dblock).
+* Fix [#6](https://github.com/dblock/mongoid-cached-json/issues/6): including parent in `json_fields` within a polymorphic reference fails with an "uninitialized constant" error, [Daniel Doubrovkine](http://github.com/dblock).
 
 1.2.1 (6/12/2012)
 -----------------
