@@ -361,6 +361,18 @@ describe Mongoid::CachedJson do
       @json_parent_foobar.as_json(:properties => :all)[:json_polymorphic_referenced_foobar][:foo].should == "REFERENCED"
     end
   end
+  context "polymorhphic relationships" do
+    before :each do
+      @company = PolyCompany.create!
+      @company_post = PolyPost.create!({ :postable => @company })
+      @person = PolyPerson.create!
+      @person_post = PolyPost.create!({ :postable => @person })
+    end
+    it "returns the correct JSON" do
+      @company_post.as_json.should == { :parent => { :id => @company.id, :type => "PolyCompany" } }
+      @person_post.as_json.should == { :parent => { :id => @person.id, :type => "PolyPerson" } }
+    end
+  end
   context "cache key" do
     it "correctly generates a cached json key" do
       example = JsonFoobar.create(:foo => "FOO", :baz => "BAZ", :bar => "BAR")

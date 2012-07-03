@@ -104,20 +104,22 @@ module Mongoid
       def resolve_json_reference(options, object, field, reference_def)
         reference_json = nil
         if reference_def[:metadata]
-          clazz = reference_def[:metadata].class_name.constantize
           key = reference_def[:metadata].key.to_sym
           if reference_def[:metadata].relation == Mongoid::Relations::Referenced::ManyToMany
+            clazz = reference_def[:metadata].class_name.constantize
             reference_json = object.send(key).map do |id|
               materialize_json(options, { :clazz => clazz, :id => id })
             end.compact
           elsif reference_def[:metadata].relation == Mongoid::Relations::Referenced::In
+            clazz = reference_def[:metadata].inverse_class_name.constantize
             reference_json = materialize_json(options, { :clazz => clazz, :id => object.send(key) })
           end
         end
         # If we get to this point and reference_json is still nil, there's no chance we can
         # load the JSON from cache so we go ahead and call as_json on the object.
-        if !reference_json
-          reference = reference_def[:definition].is_a?(Symbol) ? object.send(reference_def[:definition]) : reference_def[:definition].call(object)
+        if ! reference_json
+          reference_def_definition = reference_def[:definition]
+          reference = reference_def_definition.is_a?(Symbol) ? object.send(reference_def_definition) : reference_def_definition.call(object)
           reference_json = reference.as_json(options) if reference
         end
         reference_json
