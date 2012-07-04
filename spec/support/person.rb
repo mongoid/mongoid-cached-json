@@ -4,6 +4,7 @@ class Person
 
   field :first
   field :last
+  field :middle
 
   def name
     [ first, middle, last ].compact.join(" ")

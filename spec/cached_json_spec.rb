@@ -379,5 +379,20 @@ describe Mongoid::CachedJson do
       JsonFoobar.cached_json_key({:properties => :short, :is_top_level_json => true, :version => :v1}, example.class, example.id).should == "as_json/v1/JsonFoobar/#{example.id.to_s}/short/true"
     end
   end
+  context "embeds_many relationships" do
+    before :each do
+      @cell = PrisonCell.create!({ :number => 42 })
+      @cell.inmates.create!({ :nickname => "Joe", :person => Person.create!({ :first => "Joe" }) })
+      @cell.inmates.create!({ :nickname => "Bob", :person => Person.create!({ :first => "Bob" }) })
+    end
+    it "returns the correct JSON" do
+      @cell.as_json({ :properties => :all }).should == { :number => 42, 
+        :inmates => [
+          { :nickname => "Joe", :person => { :name => "Joe" } }, 
+          { :nickname => "Bob", :person => { :name => "Bob" } }
+        ]
+      }
+    end
+  end
 end
 

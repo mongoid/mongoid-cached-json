@@ -105,13 +105,16 @@ module Mongoid
         reference_json = nil
         if reference_def[:metadata]
           key = reference_def[:metadata].key.to_sym
-          if reference_def[:metadata].relation == Mongoid::Relations::Referenced::ManyToMany
+          if reference_def[:metadata].polymorphic?
+            clazz = reference_def[:metadata].inverse_class_name.constantize
+          else
             clazz = reference_def[:metadata].class_name.constantize
+          end
+          if reference_def[:metadata].relation == Mongoid::Relations::Referenced::ManyToMany
             reference_json = object.send(key).map do |id|
               materialize_json(options, { :clazz => clazz, :id => id })
             end.compact
           elsif reference_def[:metadata].relation == Mongoid::Relations::Referenced::In
-            clazz = reference_def[:metadata].inverse_class_name.constantize
             reference_json = materialize_json(options, { :clazz => clazz, :id => object.send(key) })
           end
         end

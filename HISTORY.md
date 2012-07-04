@@ -1,5 +1,9 @@
-1.2.2 (7/3/2012)
+1.2.3 (7/3/2012)
 ----------------
+
+* Fix: including a `referenced_in` field in `json_fields` within a child `embedded_in` a parent causes an "access to the collection is not allowed since it is an embedded document" error, [Daniel Doubrovkine](http://github.com/dblock).
+
+1.2.2 (7/3/2012)
 
 * Fix [#6](https://github.com/dblock/mongoid-cached-json/issues/6): including parent in `json_fields` within a polymorphic reference fails with an "uninitialized constant" error, [Daniel Doubrovkine](http://github.com/dblock).
 
