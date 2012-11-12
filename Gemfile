@@ -2,7 +2,6 @@ source "http://rubygems.org"
 
 gem "activesupport"
 gem "mongoid"
-gem "bson_ext"
 gem "hpricot"
 
 group :development do
