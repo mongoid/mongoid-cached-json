@@ -386,9 +386,9 @@ describe Mongoid::CachedJson do
       @cell.inmates.create!({ :nickname => "Bob", :person => Person.create!({ :first => "Bob" }) })
     end
     it "returns the correct JSON" do
-      @cell.as_json({ :properties => :all }).should == { :number => 42, 
+      @cell.as_json({ :properties => :all }).should == { :number => 42,
         :inmates => [
-          { :nickname => "Joe", :person => { :name => "Joe" } }, 
+          { :nickname => "Joe", :person => { :name => "Joe" } },
           { :nickname => "Bob", :person => { :name => "Bob" } }
         ]
       }

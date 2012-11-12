@@ -6,7 +6,7 @@ class PolyPerson
 
   json_fields \
     :id => {},
-    :type => { :definition => :_type }
+    :type => { :definition => lambda { |x| x.class.name } }
 
 end
 

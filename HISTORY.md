@@ -1,3 +1,8 @@
+1.3 (11/12/2012)
+----------------
+
+* Removed requirement for `bson_ext`, support for Mongoid 3.0, [Daniel Doubrovkine](http://github.com/dblock).
+
 1.2.3 (7/3/2012)
 ----------------
 

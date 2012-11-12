@@ -9,7 +9,7 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each do |f|
 end
 
 Mongoid.configure do |config|
-  config.master = Mongo::Connection.new.db("cached_json_test")
+  config.connect_to('cached_json_test')
 end
 
 RSpec.configure do |config|
