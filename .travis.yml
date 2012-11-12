@@ -1,7 +1,9 @@
+services:
+  - mongodb
+
 rvm:
   - 1.9.3
   - ruby-head
-  - jruby
 
 notifications:
   email:
