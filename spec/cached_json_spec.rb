@@ -180,6 +180,7 @@ describe Mongoid::CachedJson do
     it "should not yield child JSON when as_json is called on the parent and hide_as_child_json_when returns true on an instance" do
       p = SecretParent.create({ :name => "Parent" })
       p.create_sometimes_secret({ :should_tell_secret => false })
+      p.as_json({ :properties => :short }).should == { :name => "Parent", :child => nil }
       p.as_json({ :properties => :short })[:child].should be_nil
     end
   end
