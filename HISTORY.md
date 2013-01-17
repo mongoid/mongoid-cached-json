@@ -2,6 +2,7 @@ Next Release
 ------------
 
 * Collect a JSON partial representation first, then fetch data from cache only once per-key, [Daniel Doubrovkine](http://github.com/dblock).
+* Use `read_multi` if the cache store supports it to fetch data from cache in bulk, [Daniel Doubrovkine](http://github.com/dblock).
 
 1.3 (11/12/2012)
 ----------------

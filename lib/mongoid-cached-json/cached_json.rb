@@ -152,12 +152,14 @@ module Mongoid
 
     end
 
+    # Check whether the cache supports :read_multi and prefetch the data if it does.
     def self.materialize_json_references_with_read_multi(keys, partial_json)
       unfrozen_keys = keys.to_a.map(&:dup) if keys # Dalli tries to call force_encoding on each key
       local_cache = unfrozen_keys && Mongoid::CachedJson.config.cache.respond_to?(:read_multi) ? Mongoid::CachedJson.config.cache.read_multi(unfrozen_keys) : {}
       Mongoid::CachedJson.materialize_json_references(partial_json, local_cache)
     end
 
+    # Materialize all the JSON references in place.
     def self.materialize_json_references(partial_json, local_cache = {})
       if partial_json.is_a?(Hash)
         if (_ref = partial_json.delete(:_ref))
@@ -173,19 +175,21 @@ module Mongoid
             return nil if partial_json.empty?
           end
         end
-        partial_json.inject({}) do |h, (k, v)|
-          h[k] = Mongoid::CachedJson.materialize_json_references(v, local_cache)
-          h
+        partial_json.each_pair do |k, v|
+          partial_json[k] = Mongoid::CachedJson.materialize_json_references(v, local_cache)
         end
+        partial_json
       elsif partial_json.is_a?(Array)
-        partial_json.map do |v|
+        partial_json.each do |v|
           Mongoid::CachedJson.materialize_json_references(v, local_cache)
         end
+        partial_json
       else
         partial_json
       end
     end
 
+    # Return a partial JSON without resolved references and all the keys.
     def as_json_partial(options = {})
       options ||= {}
       if options[:properties] and ! self.all_json_properties.member?(options[:properties])
@@ -198,11 +202,13 @@ module Mongoid
       [ keys, partial_json ]
     end
 
+    # Fetch the partial JSON and materialize all JSON references.
     def as_json_cached(options = {})
       keys, json = as_json_partial(options)
       Mongoid::CachedJson.materialize_json_references_with_read_multi(keys, json)
     end
 
+    # Return the JSON representation of the object.
     def as_json(options = {})
       as_json_cached(options)
     end
