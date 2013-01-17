@@ -73,7 +73,7 @@ module Mongoid
       # call materialize_json)
       def materialize_json(options, object_def)
         return nil if !object_def[:object] and !object_def[:id]
-        keys = []
+        keys = Set.new
         is_top_level_json = options[:is_top_level_json] || false
         if object_def[:object]
           object_reference = object_def[:object]
@@ -83,7 +83,8 @@ module Mongoid
           clazz, id = object_def[:clazz], object_def[:id]
         end
         key = self.cached_json_key(options, clazz, id)
-        json = { :_ref => { :_key => key, :_materialize_cached_json => [ clazz, id, object_reference, options ] }}
+        keys << key
+        json = { :_ref => { :_clazz => self, :_key => key, :_materialize_cached_json => [ clazz, id, object_reference, options ] }}
         reference_defs = clazz.cached_json_reference_defs[options[:properties]]
         if !reference_defs.empty?
           object_reference = clazz.where({ :_id => id }).first if !object_reference
@@ -91,7 +92,7 @@ module Mongoid
             json.merge!(Hash[reference_defs.map do |field, definition|
               json_properties_type = (options[:properties] == :all) ? :all : :short
               reference_keys, reference = clazz.resolve_json_reference(options.merge({ :properties => json_properties_type, :is_top_level_json => false}), object_reference, field, definition)
-              keys.concat reference_keys if reference_keys
+              keys = keys.union(reference_keys) if reference_keys
               [field, reference]
             end])
           end
@@ -110,7 +111,7 @@ module Mongoid
       # be able to load the as_json representation from the cache without even getting the
       # model from the database and materializing it through Mongoid. We'll try to do this first.
       def resolve_json_reference(options, object, field, reference_def)
-        keys = []
+        keys = Set.new
         reference_json = nil
         if reference_def[:metadata]
           key = reference_def[:metadata].key.to_sym
@@ -122,12 +123,12 @@ module Mongoid
           if reference_def[:metadata].relation == Mongoid::Relations::Referenced::ManyToMany
             reference_json = object.send(key).map do |id|
               materialize_keys, json = materialize_json(options, { :clazz => clazz, :id => id })
-              keys.concat materialize_keys if materialize_keys
+              keys = keys.union(materialize_keys) if materialize_keys
               json
             end.compact
           elsif reference_def[:metadata].relation == Mongoid::Relations::Referenced::In
             materialize_keys, json = materialize_json(options, { :clazz => clazz, :id => object.send(key) })
-            keys.concat materialize_keys if materialize_keys
+            keys = keys.union(materialize_keys) if materialize_keys
             json
           end
         end
@@ -136,40 +137,50 @@ module Mongoid
         if ! reference_json
           reference_def_definition = reference_def[:definition]
           reference = reference_def_definition.is_a?(Symbol) ? object.send(reference_def_definition) : reference_def_definition.call(object)
-          reference_json = reference.as_json(options) if reference
+          reference_json = nil
+          if reference
+            if reference.respond_to?(:as_json_partial)
+              reference_keys, reference_json = reference.as_json_partial(options)
+              keys = keys.union(reference_keys) if reference_keys
+            else
+              reference_json = reference.as_json(options)
+            end
+          end
         end
         [ keys, reference_json ]
       end
 
-      def materialize_json_references(partial_json)
-        if partial_json.is_a?(Hash)
-          if (_ref = partial_json.delete(:_ref))
-            fetched_json = Mongoid::CachedJson.config.cache.fetch(_ref[:_key], { :force => !! Mongoid::CachedJson.config.disable_caching }) do
-              materialize_cached_json(* _ref[:_materialize_cached_json])
-            end
-            if fetched_json
-              partial_json.merge! fetched_json
-            else
-              # a single _ref that resolved to a nil
-              return nil if partial_json.empty?
-            end
-          end
-          partial_json.inject({}) do |h, (k, v)|
-            h[k] = materialize_json_references(v)
-            h
-          end
-        elsif partial_json.is_a?(Array)
-          partial_json.map do |v|
-            materialize_json_references(v)
-          end
-        else
-          partial_json
-        end
-      end
-
     end
 
-    def as_json(options = {})
+    def self.materialize_json_references(partial_json, local_cache = {})
+      if partial_json.is_a?(Hash)
+        if (_ref = partial_json.delete(:_ref))
+          key = _ref[:_key]
+          fetched_json = local_cache[key] if local_cache.has_key?(key)
+          fetched_json ||= (local_cache[key] = Mongoid::CachedJson.config.cache.fetch(key, { :force => !! Mongoid::CachedJson.config.disable_caching }) do
+           _ref[:_clazz].materialize_cached_json(* _ref[:_materialize_cached_json])
+          end)
+          if fetched_json
+            partial_json.merge! fetched_json
+          else
+            # a single _ref that resolved to a nil
+            return nil if partial_json.empty?
+          end
+        end
+        partial_json.inject({}) do |h, (k, v)|
+          h[k] = Mongoid::CachedJson.materialize_json_references(v, local_cache)
+          h
+        end
+      elsif partial_json.is_a?(Array)
+        partial_json.map do |v|
+          Mongoid::CachedJson.materialize_json_references(v, local_cache)
+        end
+      else
+        partial_json
+      end
+    end
+
+    def as_json_partial(options = {})
       options ||= {}
       if options[:properties] and ! self.all_json_properties.member?(options[:properties])
         raise ArgumentError.new("Unknown properties option: #{options[:properties]}")
@@ -178,7 +189,12 @@ module Mongoid
       keys, partial_json = self.class.materialize_json({
         :properties => :short, :is_top_level_json => true, :version => Mongoid::CachedJson.config.default_version
       }.merge(options), { :object => self })
-      self.class.materialize_json_references(partial_json)
+      [ keys, partial_json ]
+    end
+
+    def as_json(options = {})
+      _, json = as_json_partial(options)
+      Mongoid::CachedJson.materialize_json_references(json)
     end
 
     # Expire all JSON entries for this class.

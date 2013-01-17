@@ -408,6 +408,22 @@ describe Mongoid::CachedJson do
       }
     end
   end
+  context "with repeated objects in the JSON" do
+    before :each do
+      @cell = PrisonCell.create!({ :number => 42 })
+      @person = Person.create!({ :first => "Evil" })
+      @cell.inmates.create!({ :nickname => "Joe", :person => @person })
+      @cell.inmates.create!({ :nickname => "Bob", :person => @person })
+    end
+    it "returns the correct JSON" do
+      @cell.as_json({ :properties => :all }).should == { :number => 42,
+        :inmates => [
+          { :nickname => "Joe", :person => { :name => "Evil" } },
+          { :nickname => "Bob", :person => { :name => "Evil" } }
+        ]
+      }
+    end
+  end
   context "belongs_to relationship" do
     before :each do
       @tool = Tool.create!({ :name => "hammer" })
