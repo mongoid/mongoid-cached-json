@@ -22,6 +22,7 @@ describe ActiveSupport::Cache::DalliStore do
         tool1_key = Tool.cached_json_key(options, Tool, tool1.id)
         tool2 = Tool.create!({ :name => "screwdriver" })
         tool2_key = Tool.cached_json_key(options, Tool, tool2.id)
+        Mongoid::CachedJson.config.cache.should_not_receive(:fetch)
         Mongoid::CachedJson.config.cache.should_receive(:read_multi).with([ tool1_key, tool2_key ]).once.and_return({
           tool1_key => { :_id => tool1.id.to_s },
           tool2_key => { :_id => tool2.id.to_s }
