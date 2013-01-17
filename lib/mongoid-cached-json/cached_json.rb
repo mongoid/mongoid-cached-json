@@ -73,7 +73,6 @@ module Mongoid
       # call materialize_json)
       def materialize_json(options, object_def)
         return nil if !object_def[:object] and !object_def[:id]
-        keys = Set.new
         is_top_level_json = options[:is_top_level_json] || false
         if object_def[:object]
           object_reference = object_def[:object]
@@ -83,7 +82,8 @@ module Mongoid
           clazz, id = object_def[:clazz], object_def[:id]
         end
         key = self.cached_json_key(options, clazz, id)
-        keys << key
+        keys = Set.new
+        keys.add key
         json = { :_ref => { :_clazz => self, :_key => key, :_materialize_cached_json => [ clazz, id, object_reference, options ] }}
         reference_defs = clazz.cached_json_reference_defs[options[:properties]]
         if !reference_defs.empty?
@@ -111,7 +111,7 @@ module Mongoid
       # be able to load the as_json representation from the cache without even getting the
       # model from the database and materializing it through Mongoid. We'll try to do this first.
       def resolve_json_reference(options, object, field, reference_def)
-        keys = Set.new
+        keys = nil
         reference_json = nil
         if reference_def[:metadata]
           key = reference_def[:metadata].key.to_sym
@@ -123,12 +123,12 @@ module Mongoid
           if reference_def[:metadata].relation == Mongoid::Relations::Referenced::ManyToMany
             reference_json = object.send(key).map do |id|
               materialize_keys, json = materialize_json(options, { :clazz => clazz, :id => id })
-              keys = keys.union(materialize_keys) if materialize_keys
+              keys = keys ? keys.union(materialize_keys) : materialize_keys
               json
             end.compact
           elsif reference_def[:metadata].relation == Mongoid::Relations::Referenced::In
             materialize_keys, json = materialize_json(options, { :clazz => clazz, :id => object.send(key) })
-            keys = keys.union(materialize_keys) if materialize_keys
+            keys = keys ? keys.union(materialize_keys) : materialize_keys
             json
           end
         end
@@ -141,7 +141,7 @@ module Mongoid
           if reference
             if reference.respond_to?(:as_json_partial)
               reference_keys, reference_json = reference.as_json_partial(options)
-              keys = keys.union(reference_keys) if reference_keys
+              keys = keys ? keys.union(reference_keys) : reference_keys
             else
               reference_json = reference.as_json(options)
             end
