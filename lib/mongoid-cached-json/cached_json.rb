@@ -152,6 +152,11 @@ module Mongoid
 
     end
 
+    def self.materialize_json_references_with_read_multi(keys, partial_json)
+      local_cache = Mongoid::CachedJson.config.cache.respond_to?(:read_multi) ? Mongoid::CachedJson.config.cache.read_multi(keys.to_a) : {}
+      Mongoid::CachedJson.materialize_json_references(partial_json, local_cache)
+    end
+
     def self.materialize_json_references(partial_json, local_cache = {})
       if partial_json.is_a?(Hash)
         if (_ref = partial_json.delete(:_ref))
@@ -192,9 +197,13 @@ module Mongoid
       [ keys, partial_json ]
     end
 
+    def as_json_cached(options = {})
+      keys, json = as_json_partial(options)
+      Mongoid::CachedJson.materialize_json_references_with_read_multi(keys, json)
+    end
+
     def as_json(options = {})
-      _, json = as_json_partial(options)
-      Mongoid::CachedJson.materialize_json_references(json)
+      as_json_cached(options)
     end
 
     # Expire all JSON entries for this class.

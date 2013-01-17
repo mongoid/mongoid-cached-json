@@ -11,8 +11,8 @@ module Mongoid
     end
 
     def as_json(options = {})
-      _, json = as_json_partial(options)
-      Mongoid::CachedJson.materialize_json_references(json)
+      keys, json = as_json_partial(options)
+      Mongoid::CachedJson.materialize_json_references_with_read_multi(keys, json)
     end
   end
 end
