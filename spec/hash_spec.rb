@@ -20,5 +20,20 @@ describe Hash do
       :t => [ { :foo=>"FOO1", "Baz" => "BAZ", :default_foo => "DEFAULT_FOO" }, "y" ]
     }
   end
+  it "uses a local cache to fetch repeated objects" do
+    tool = Tool.create!({ :name => "hammer" })
+    Mongoid::CachedJson.config.cache.should_receive(:fetch).once.and_return({
+      :x => :y
+    })
+    {
+      :t1 => tool,
+      :t2 => tool,
+      :t3 => tool
+    }.as_json({ properties: :all }).should == {
+      :t1 => { :tool_box => nil, :x => :y },
+      :t2 => { :tool_box => nil, :x => :y },
+      :t3 => { :tool_box => nil, :x => :y },
+    }
+  end
 end
 

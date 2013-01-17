@@ -1,5 +1,5 @@
 class Array
-  def as_json_partial(options)
+  def as_json_partial(options = {})
     keys = nil
     json = map do |i|
       if i.respond_to?(:as_json_partial)

@@ -1,5 +1,6 @@
 class Hash
-  def as_json_partial(options)
+
+  def as_json_partial(options = {})
     keys = nil
     json = inject({}) do |h, (k, v)|
       if v.respond_to?(:as_json_partial)
@@ -13,8 +14,10 @@ class Hash
     end
     [ keys, json ]
   end
+
   def as_json(options = {})
     _, json = as_json_partial(options)
     Mongoid::CachedJson.materialize_json_references(json)
   end
+
 end
