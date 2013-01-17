@@ -152,6 +152,7 @@ module Mongoid
 
     end
 
+    # Materialize all the JSON references in place.
     def self.materialize_json_references(partial_json, local_cache = {})
       if partial_json.is_a?(Hash)
         if (_ref = partial_json.delete(:_ref))
@@ -167,14 +168,15 @@ module Mongoid
             return nil if partial_json.empty?
           end
         end
-        partial_json.inject({}) do |h, (k, v)|
-          h[k] = Mongoid::CachedJson.materialize_json_references(v, local_cache)
-          h
+        partial_json.each_pair do |k, v|
+          partial_json[k] = Mongoid::CachedJson.materialize_json_references(v, local_cache)
         end
+        partial_json
       elsif partial_json.is_a?(Array)
-        partial_json.map do |v|
+        partial_json.each do |v|
           Mongoid::CachedJson.materialize_json_references(v, local_cache)
         end
+        partial_json
       else
         partial_json
       end
