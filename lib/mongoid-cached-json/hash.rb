@@ -5,7 +5,7 @@ class Hash
     json = inject({}) do |h, (k, v)|
       if v.respond_to?(:as_json_partial)
         partial_keys, partial_json = v.as_json_partial(options)
-        keys = (keys || Set.new).union(partial_keys) if partial_keys
+        keys = keys ? keys.merge_set(partial_keys) : partial_keys
         h[k] = partial_json
       else
         h[k] = v.as_json(options)
