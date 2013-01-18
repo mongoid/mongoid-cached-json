@@ -4,7 +4,7 @@ module Mongoid
       keys = nil
       json = map do |i|
         partial_keys, json = i.as_json_partial(options)
-        keys = (keys || Set.new).union(partial_keys) if partial_keys
+        keys = keys ? keys.merge_set(partial_keys) : partial_keys
         json
       end
       [ keys, json ]
