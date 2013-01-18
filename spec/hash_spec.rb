@@ -14,13 +14,15 @@ describe Hash do
       :z => {
         :foobar1 => foobar1
       },
-      :t => [ foobar1, :y ]
+      :t => [ foobar1, :y ],
+      "empty" => []
     }.as_json.should == {
       :x => "y",
       :foobar1 => { :foo => "FOO1", "Baz" => "BAZ", :default_foo => "DEFAULT_FOO" },
       :foobar2 => { :foo => "FOO2", "Baz"=>"BAZ", :default_foo => "DEFAULT_FOO" },
       :z => { :foobar1 => { :foo => "FOO1", "Baz" => "BAZ", :default_foo => "DEFAULT_FOO" } },
-      :t => [ { :foo=>"FOO1", "Baz" => "BAZ", :default_foo => "DEFAULT_FOO" }, "y" ]
+      :t => [ { :foo=>"FOO1", "Baz" => "BAZ", :default_foo => "DEFAULT_FOO" }, "y" ],
+      "empty" => []
     }
   end
   it "uses a local cache to fetch repeated objects" do
