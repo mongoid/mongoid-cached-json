@@ -10,9 +10,8 @@ Using `Mongoid::CachedJson` we were able to cut our JSON API average response ti
 Resources
 ---------
 
-* [Need Help?](http://groups.google.com/group/mongoid-cached-json)
+* [Need Help? Google Group](http://groups.google.com/group/mongoid-cached-json)
 * [Source Code](http://github.com/dblock/mongoid-cached-json)
-* [Travis CI](https://secure.travis-ci.org/dblock/mongoid-cached-json)
 
 Quickstart
 ----------
@@ -234,7 +233,7 @@ end
 Performance
 -----------
 
-The gem implements two interesting optimizations.
+This implements two interesting optimizations.
 
 ### Bulk Reference Resolving w/ Local Store
 
