@@ -10,9 +10,8 @@ Using `Mongoid::CachedJson` we were able to cut our JSON API average response ti
 Resources
 ---------
 
-* [Need Help?](http://groups.google.com/group/mongoid-cached-json)
+* [Need Help? Google Group](http://groups.google.com/group/mongoid-cached-json)
 * [Source Code](http://github.com/dblock/mongoid-cached-json)
-* [Travis CI](https://secure.travis-ci.org/dblock/mongoid-cached-json)
 
 Quickstart
 ----------
@@ -231,10 +230,26 @@ describe "updating a person" do
 end
 ```
 
+Performance
+-----------
+
+This implements two interesting optimizations.
+
+### Bulk Reference Resolving w/ Local Store
+
+Consider an array of Mongoid instances, each with numerous references to other objects. It's typical to see such instances reference the same object. `Mongoid::CachedJson` first collects all JSON references, then resolves them after suppressing duplicates. This significantly reduces the number of cache queries.
+
+### Fetching Cache Data in Bulk
+
+Various cache stores, including Memcached, support bulk read operations. The [Dalli](https://github.com/mperham/dalli) gem exposes this via the `read_multi` method. `Mongoid::CachedJson` will always invoke `read_multi` where available, which significantly reduces the number of network roundtrips to the cache servers.
+
 Contributing
 ------------
 
-Fork the project. Make your feature addition or bug fix with tests. Send a pull request. Bonus points for topic branches.
+* Fork the project. 
+* Make your feature addition or bug fix with tests. 
+* Don't forget to update `CHANGELOG.md`. 
+* Send a pull request. Bonus points for topic branches.
 
 Copyright and License
 ---------------------
