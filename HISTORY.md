@@ -1,3 +1,8 @@
+Next Release
+------------
+
+* Collect a JSON partial representation first, then fetch data from cache only once per-key, [Daniel Doubrovkine](http://github.com/dblock).
+
 1.3 (11/12/2012)
 ----------------
 

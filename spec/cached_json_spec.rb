@@ -117,49 +117,58 @@ describe Mongoid::CachedJson do
   context "one-to-one relationships" do
     before(:each) do
       @artwork = AwesomeArtwork.create({ :name => "Mona Lisa" })
-      @image = @artwork.create_awesome_image({ :name => "Picture of Mona Lisa" })
-    end
-    it "uses the correct properties on the base object and passes :short to any sub-objects for :public and :short properties" do
-      3.times do
-        @artwork.as_json({ :properties => :short }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Mona" } }
-        @artwork.as_json({ :properties => :public }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Mona" } }
-        @artwork.as_json({ :properties => :all }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Mona", :url => "http://example.com/404.html" } }
-        @image.as_json({ :properties => :short }).should == { :name => "Picture of Mona Lisa", :nickname => "Mona" }
-        @image.as_json({ :properties => :public }).should == { :name => "Picture of Mona Lisa", :nickname => "Mona", :url => "http://example.com/404.html" }
-      end
     end
     it "uses the correct properties on the base object and passes :all to any sub-objects for :all properties" do
       3.times do
-        @artwork.as_json({ :properties => :all }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Mona", :url => "http://example.com/404.html" } }
+        @artwork.as_json({ :properties => :all }).should == { :name => "Mona Lisa", :image => nil }
       end
     end
-    it "correctly updates fields when either the parent or child class changes" do
-      # Call as_json for all properties so that the json will get cached
-      [:short, :public, :all].each { |properties| @artwork.as_json({ :properties => properties }) }
-      @image.nickname = "Worst Painting Ever"
-      # Nothing has been saved yet, cached json for referenced document should reflect the truth in the database
-      3.times do
-        @artwork.as_json({ :properties => :short }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Mona" } }
-        @artwork.as_json({ :properties => :public }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Mona" } }
-        @artwork.as_json({ :properties => :all }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Mona", :url => "http://example.com/404.html" } }
+    context "with the relationship present" do
+      before(:each) do
+        @image = @artwork.create_awesome_image({ :name => "Picture of Mona Lisa" })
       end
-      @image.save
-      3.times do
-        @artwork.as_json({ :properties => :short }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Worst Painting Ever" } }
-        @artwork.as_json({ :properties => :public }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Worst Painting Ever" } }
-        @artwork.as_json({ :properties => :all }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Worst Painting Ever", :url => "http://example.com/404.html" } }
+      it "uses the correct properties on the base object and passes :short to any sub-objects for :public and :short properties" do
+        3.times do
+          @artwork.as_json({ :properties => :short }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Mona" } }
+          @artwork.as_json({ :properties => :public }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Mona" } }
+          @artwork.as_json({ :properties => :all }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Mona", :url => "http://example.com/404.html" } }
+          @image.as_json({ :properties => :short }).should == { :name => "Picture of Mona Lisa", :nickname => "Mona" }
+          @image.as_json({ :properties => :public }).should == { :name => "Picture of Mona Lisa", :nickname => "Mona", :url => "http://example.com/404.html" }
+        end
       end
-      @image.name = "Picture of Mona Lisa Watercolor"
-      3.times do
-        @artwork.as_json({ :properties => :short }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Worst Painting Ever" } }
-        @artwork.as_json({ :properties => :public }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Worst Painting Ever" } }
-        @artwork.as_json({ :properties => :all }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Worst Painting Ever", :url => "http://example.com/404.html" } }
+      it "uses the correct properties on the base object and passes :all to any sub-objects for :all properties" do
+        3.times do
+          @artwork.as_json({ :properties => :all }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Mona", :url => "http://example.com/404.html" } }
+        end
       end
-      @image.save
-      3.times do
-        @artwork.as_json({ :properties => :short }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa Watercolor", :nickname => "Worst Painting Ever" } }
-        @artwork.as_json({ :properties => :public }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa Watercolor", :nickname => "Worst Painting Ever" } }
-        @artwork.as_json({ :properties => :all }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa Watercolor", :nickname => "Worst Painting Ever", :url => "http://example.com/404.html" } }
+      it "correctly updates fields when either the parent or child class changes" do
+        # Call as_json for all properties so that the json will get cached
+        [:short, :public, :all].each { |properties| @artwork.as_json({ :properties => properties }) }
+        @image.nickname = "Worst Painting Ever"
+        # Nothing has been saved yet, cached json for referenced document should reflect the truth in the database
+        3.times do
+          @artwork.as_json({ :properties => :short }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Mona" } }
+          @artwork.as_json({ :properties => :public }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Mona" } }
+          @artwork.as_json({ :properties => :all }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Mona", :url => "http://example.com/404.html" } }
+        end
+        @image.save
+        3.times do
+          @artwork.as_json({ :properties => :short }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Worst Painting Ever" } }
+          @artwork.as_json({ :properties => :public }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Worst Painting Ever" } }
+          @artwork.as_json({ :properties => :all }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Worst Painting Ever", :url => "http://example.com/404.html" } }
+        end
+        @image.name = "Picture of Mona Lisa Watercolor"
+        3.times do
+          @artwork.as_json({ :properties => :short }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Worst Painting Ever" } }
+          @artwork.as_json({ :properties => :public }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Worst Painting Ever" } }
+          @artwork.as_json({ :properties => :all }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa", :nickname => "Worst Painting Ever", :url => "http://example.com/404.html" } }
+        end
+        @image.save
+        3.times do
+          @artwork.as_json({ :properties => :short }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa Watercolor", :nickname => "Worst Painting Ever" } }
+          @artwork.as_json({ :properties => :public }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa Watercolor", :nickname => "Worst Painting Ever" } }
+          @artwork.as_json({ :properties => :all }).should == { :name => "Mona Lisa", :image => { :name => "Picture of Mona Lisa Watercolor", :nickname => "Worst Painting Ever", :url => "http://example.com/404.html" } }
+        end
       end
     end
   end
@@ -172,6 +181,10 @@ describe Mongoid::CachedJson do
       c = SometimesSecret.create({ :should_tell_secret => false })
       c.as_json({ :properties => :short }).should == { :secret => "Afraid of the dark" }
     end
+    it "should yield JSON without an instance of a child" do
+      p = SecretParent.create({ :name => "Parent" })
+      p.as_json({ :properties => :all })[:child].should be_nil
+    end
     it "should yield child JSON when as_json is called on the parent and hide_as_child_json_when returns false on an instance" do
       p = SecretParent.create({ :name => "Parent" })
       p.create_sometimes_secret({ :should_tell_secret => true })
@@ -180,6 +193,7 @@ describe Mongoid::CachedJson do
     it "should not yield child JSON when as_json is called on the parent and hide_as_child_json_when returns true on an instance" do
       p = SecretParent.create({ :name => "Parent" })
       p.create_sometimes_secret({ :should_tell_secret => false })
+      p.as_json({ :properties => :short }).should == { :name => "Parent", :child => nil }
       p.as_json({ :properties => :short })[:child].should be_nil
     end
   end
@@ -392,6 +406,39 @@ describe Mongoid::CachedJson do
           { :nickname => "Bob", :person => { :name => "Bob" } }
         ]
       }
+    end
+  end
+  context "with repeated objects in the JSON" do
+    before :each do
+      @cell = PrisonCell.create!({ :number => 42 })
+      @person = Person.create!({ :first => "Evil" })
+      @cell.inmates.create!({ :nickname => "Joe", :person => @person })
+      @cell.inmates.create!({ :nickname => "Bob", :person => @person })
+    end
+    it "returns the correct JSON" do
+      @cell.as_json({ :properties => :all }).should == { :number => 42,
+        :inmates => [
+          { :nickname => "Joe", :person => { :name => "Evil" } },
+          { :nickname => "Bob", :person => { :name => "Evil" } }
+        ]
+      }
+    end
+  end
+  context "belongs_to relationship" do
+    before :each do
+      @tool = Tool.create!({ :name => "hammer" })
+    end
+    it "returns a nil reference" do
+      @tool.as_json({ :properties => :all }).should == { :tool_box => nil, :name => "hammer" }
+    end
+    context "persisted" do
+      before :each do
+        @tool_box = ToolBox.create!({ :color => "red" })
+        @tool.update_attributes!({ :tool_box => @tool_box })
+      end
+      it "returns a reference" do
+        @tool.as_json({ :properties => :all }).should == { :tool_box => { :color => "red" }, :name => "hammer" }
+      end
     end
   end
 end
