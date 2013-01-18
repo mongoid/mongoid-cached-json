@@ -15,7 +15,7 @@ class JsonFoobar
     "Naz" => { :definition => :baz, :versions => [ :v2, :v3 ] },
     :renamed_baz => { :properties => :all, :definition => :baz },
     :default_foo => { }, # default value for properties is :short
-    :computed_field => { :properties => :all, :definition => lambda { |x| x.foo + x.bar } }
+    :computed_field => { :properties => :all, :definition => lambda { |x| "#{x.foo}#{x.bar}" } }
 
 end
 

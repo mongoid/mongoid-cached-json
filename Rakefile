@@ -32,7 +32,9 @@ require 'rspec/core'
 require 'rspec/core/rake_task'
 
 RSpec::Core::RakeTask.new(:spec) do |spec|
-  spec.pattern = FileList['spec/**/*_spec.rb']
+  files = FileList['spec/**/*_spec.rb']
+  files = files.exclude 'spec/benchmark_spec.rb'
+  spec.pattern = files
 end
 
 task :default => :spec
