@@ -15,8 +15,6 @@ class Array
 
   def as_json(options = {})
     keys, json = as_json_partial(options)
-      puts "keys: #{keys.to_a.join(', ')}"
-      puts "json: #{json}"
     Mongoid::CachedJson.materialize_json_references_with_read_multi(keys, json)
   end
 end

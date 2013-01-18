@@ -92,6 +92,10 @@ module Mongoid
             json.merge!(Hash[reference_defs.map do |field, definition|
               json_properties_type = (options[:properties] == :all) ? :all : :short
               reference_keys, reference = clazz.resolve_json_reference(options.merge({ :properties => json_properties_type, :is_top_level_json => false}), object_reference, field, definition)
+              if (reference.is_a?(Hash) && ref = reference[:_ref])
+                ref[:_parent] = json
+                ref[:_field] = field
+              end
               keys.merge_set(reference_keys)
               [field, reference]
             end])
@@ -126,10 +130,6 @@ module Mongoid
               keys = keys ? keys.merge_set(materialize_keys) : materialize_keys
               json
             end.compact
-          elsif reference_def[:metadata].relation == Mongoid::Relations::Referenced::In
-            materialize_keys, json = materialize_json(options, { :clazz => clazz, :id => object.send(key) })
-            keys = keys ? keys.merge_set(materialize_keys) : materialize_keys
-            json
           end
         end
         # If we get to this point and reference_json is still nil, there's no chance we can
@@ -164,7 +164,6 @@ module Mongoid
     def self.materialize_json_references(key_refs, local_cache = {})
       key_refs.each_pair do |key, refs|
         refs.each do |ref|
-          puts "REF: #{ref}"
           _ref = ref.delete(:_ref)
           key = _ref[:_key]
           fetched_json = local_cache[key] if local_cache.has_key?(key)
@@ -173,9 +172,9 @@ module Mongoid
           end)
           if fetched_json
             ref.merge! fetched_json
-          else
+          elsif _ref[:_parent]
             # a single _ref that resolved to a nil
-            # return nil if partial_json.empty?
+            _ref[:_parent][_ref[:_field]] = nil
           end
         end
       end
