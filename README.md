@@ -246,7 +246,10 @@ Various cache stores, including Memcached, support bulk read operations. The [Da
 Contributing
 ------------
 
-Fork the project. Make your feature addition or bug fix with tests. Send a pull request. Bonus points for topic branches.
+* Fork the project. 
+* Make your feature addition or bug fix with tests. 
+* Don't forget to update `CHANGELOG.md`. 
+* Send a pull request. Bonus points for topic branches.
 
 Copyright and License
 ---------------------
