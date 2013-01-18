@@ -83,7 +83,7 @@ module Mongoid
         end
         key = self.cached_json_key(options, clazz, id)
         json = { :_ref => { :_clazz => self, :_key => key, :_materialize_cached_json => [ clazz, id, object_reference, options ] }}
-        keys = KeyReferences.new
+        keys = Mongoid::CachedJson::KeyReferences.new
         keys.set_and_add(key, json)
         reference_defs = clazz.cached_json_reference_defs[options[:properties]]
         if !reference_defs.empty?
