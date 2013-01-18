@@ -3,9 +3,13 @@ module Mongoid
     def as_json_partial(options = {})
       keys = nil
       json = map do |i|
-        partial_keys, json = i.as_json_partial(options)
-        keys = keys ? keys.merge_set(partial_keys) : partial_keys
-        json
+        if i.respond_to?(:as_json_partial)
+          partial_keys, partial_json = i.as_json_partial(options)
+          keys = keys ? keys.merge_set(partial_keys) : partial_keys
+          partial_json
+        else
+          i.as_json(options)
+        end
       end
       [ keys, json ]
     end
