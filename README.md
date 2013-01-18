@@ -231,6 +231,19 @@ describe "updating a person" do
 end
 ```
 
+Performance
+-----------
+
+The gem implements two interesting optimizations.
+
+### Bulk Reference Resolving w/ Local Store
+
+Consider an array of Mongoid instances, each with numerous references to other objects. It's typical to see such instances reference the same object. `Mongoid::CachedJson` first collects all JSON references, then resolves them after suppressing duplicates. This significantly reduces the number of cache queries.
+
+### Fetching Cache Data in Bulk
+
+Various cache stores, including Memcached, support bulk read operations. The [Dalli](https://github.com/mperham/dalli) gem exposes this via the `read_multi` method. `Mongoid::CachedJson` will always invoke `read_multi` where available, which significantly reduces the number of network roundtrips to the cache servers.
+
 Contributing
 ------------
 
