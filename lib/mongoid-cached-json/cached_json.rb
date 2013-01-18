@@ -156,7 +156,7 @@ module Mongoid
     def self.materialize_json_references_with_read_multi(key_refs, partial_json)
       unfrozen_keys = key_refs.keys.to_a.map(&:dup) if key_refs # Dalli tries to call force_encoding on each key
       local_cache = unfrozen_keys && Mongoid::CachedJson.config.cache.respond_to?(:read_multi) ? Mongoid::CachedJson.config.cache.read_multi(unfrozen_keys) : {}
-      Mongoid::CachedJson.materialize_json_references(key_refs, local_cache)
+      Mongoid::CachedJson.materialize_json_references(key_refs, local_cache) if key_refs
       partial_json
     end
 

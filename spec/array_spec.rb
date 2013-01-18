@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 describe Array do
+  it "array" do
+    [ :x, "y" ].as_json.should == [ "x", "y" ]
+  end
   it "materializes multiple objects that may or may not respond to as_json_partial" do
     foobar1 = JsonFoobar.create!({ :foo => "FOO1", :baz => "BAZ", :bar => "BAR" })
     foobar2 = JsonFoobar.create!({ :foo => "FOO2", :baz => "BAZ", :bar => "BAR" })
