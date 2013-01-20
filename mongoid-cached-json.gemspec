@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "mongoid-cached-json"
-  s.version = "1.3.0"
+  s.version = "1.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Aaron Windsor", "Daniel Doubrovkine", "Frank Macreery"]
-  s.date = "2012-11-12"
+  s.date = "2013-01-20"
   s.description = "Cached-json is a DSL for describing JSON representations of Mongoid models."
   s.email = "dblock@dblock.org"
   s.extra_rdoc_files = [
@@ -18,8 +18,12 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     "lib/mongoid-cached-json.rb",
+    "lib/mongoid-cached-json/array.rb",
     "lib/mongoid-cached-json/cached_json.rb",
     "lib/mongoid-cached-json/config.rb",
+    "lib/mongoid-cached-json/hash.rb",
+    "lib/mongoid-cached-json/key_references.rb",
+    "lib/mongoid-cached-json/mongoid_criteria.rb",
     "lib/mongoid-cached-json/version.rb"
   ]
   s.homepage = "http://github.com/dblock/mongoid-cached-json"
@@ -39,6 +43,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<bundler>, ["~> 1.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.6"])
       s.add_development_dependency(%q<yard>, ["~> 0.6"])
+      s.add_development_dependency(%q<dalli>, ["~> 2.6"])
     else
       s.add_dependency(%q<activesupport>, [">= 0"])
       s.add_dependency(%q<mongoid>, [">= 0"])
@@ -47,6 +52,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<bundler>, ["~> 1.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.6"])
       s.add_dependency(%q<yard>, ["~> 0.6"])
+      s.add_dependency(%q<dalli>, ["~> 2.6"])
     end
   else
     s.add_dependency(%q<activesupport>, [">= 0"])
@@ -56,6 +62,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<bundler>, ["~> 1.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.6"])
     s.add_dependency(%q<yard>, ["~> 0.6"])
+    s.add_dependency(%q<dalli>, ["~> 2.6"])
   end
 end
 
