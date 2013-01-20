@@ -1,8 +1,9 @@
-Next Release
-------------
+1.4 (1/20/2013)
+---------------
 
 * Collect a JSON partial representation first, then fetch data from cache only once per-key - [@dblock](http://github.com/dblock), [@macreery](http://github.com/macreery).
 * Use `read_multi` if the cache store supports it to fetch data from cache in bulk - [@dblock](http://github.com/dblock), [@macreery](http://github.com/macreery).
+* Added a benchmark test suite - [@dblock](http://github.com/dblock), [@macreery](http://github.com/macreery).
 
 1.3 (11/12/2012)
 ----------------
