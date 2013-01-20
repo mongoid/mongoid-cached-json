@@ -10,3 +10,4 @@ class Tool
     :tool_box => { :type => :reference }
 
 end
+
