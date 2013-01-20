@@ -6,7 +6,7 @@ describe Mongoid::CachedJson do
 
   before(:all) do
     @n = 100
-    puts "Benchmarking #{Mongoid::CachedJson::VERSION} with #{RUBY_DESCRIPTION}"
+    puts "Benchmarking #{Mongoid::CachedJson::VERSION} with #{RUBY_DESCRIPTION}, Dalli #{Dalli::VERSION}"
   end
 
   before do
@@ -68,6 +68,7 @@ describe Mongoid::CachedJson do
         @cache = Mongoid::CachedJson::Config.cache
         Mongoid::CachedJson.configure do |config|
           config.cache = ActiveSupport::Cache.lookup_store(cache_store)
+          config.cache.clear
         end
       end
       after :each do
