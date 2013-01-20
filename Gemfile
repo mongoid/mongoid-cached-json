@@ -9,6 +9,6 @@ group :development do
   gem "bundler",   "~> 1.0"
   gem "jeweler",   "~> 1.6"
   gem "yard",      "~> 0.6"
-  gem "dalli",     "~> 2.1"
+  gem "dalli",     "~> 2.6"
 end
 
