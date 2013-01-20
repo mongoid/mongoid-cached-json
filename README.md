@@ -223,7 +223,7 @@ You may also want to use [this RSpec matcher](https://github.com/dblock/mongoid-
 ```ruby
 describe "updating a person" do
   it "invalidates cache" do
-    lambda { 
+    lambda {
       @person.update_attributes!({ :name => "updated" }
     }.should invalidate @person
   end
@@ -233,7 +233,7 @@ end
 Performance
 -----------
 
-This implements two interesting optimizations.
+This gem implements two interesting optimizations.
 
 ### Bulk Reference Resolving w/ Local Store
 
@@ -246,9 +246,9 @@ Various cache stores, including Memcached, support bulk read operations. The [Da
 Contributing
 ------------
 
-* Fork the project. 
-* Make your feature addition or bug fix with tests. 
-* Don't forget to update `CHANGELOG.md`. 
+* Fork the project.
+* Make your feature addition or bug fix with tests.
+* Don't forget to update `CHANGELOG.md`.
 * Send a pull request. Bonus points for topic branches.
 
 Copyright and License
