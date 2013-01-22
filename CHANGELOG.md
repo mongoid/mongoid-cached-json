@@ -1,8 +1,6 @@
 1.4.1 (01/22/2013)
 ---------------
 * Invalidate cache in `after_destroy` - [@dblock](http://github.com/dblock).
-* Do not invalidate cache unless document has changed - [@dblock](http://github.com/dblock).
-* Added `expire_cached_json!` that doesn't check whether the document has changed - [@dblock](http://github.com/dblock).
 * Do not invalidate cache when the document is created - [@dblock](http://github.com/dblock).
 
 1.4 (01/20/2013)

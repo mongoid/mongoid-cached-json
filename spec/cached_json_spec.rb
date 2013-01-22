@@ -72,10 +72,10 @@ describe Mongoid::CachedJson do
             @foobar.update_attributes!(:foo => "BAR")
           }.to invalidate @foobar
         end
-        it "should not invalidate cache when a model is saved without changes" do
+        it "should also invalidate cache when a model is saved without changes" do
           expect {
             @foobar.save!
-          }.to_not invalidate @foobar
+          }.to invalidate @foobar
         end
         it "should invalidate cache when a model is destroyed" do
           expect {
