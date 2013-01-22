@@ -2,6 +2,7 @@
 ---------------
 * Invalidate cache in `after_destroy` - [@dblock](http://github.com/dblock).
 * Do not invalidate cache when the document is created - [@dblock](http://github.com/dblock).
+* Invalidate cache in `after_update` instead of `before_update` - [@dblock](http://github.com/dblock).
 
 1.4 (01/20/2013)
 ---------------

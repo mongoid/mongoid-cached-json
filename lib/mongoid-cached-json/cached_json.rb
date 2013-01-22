@@ -42,7 +42,7 @@ module Mongoid
             end
           end
         end
-        before_update :expire_cached_json
+        after_update :expire_cached_json
         after_destroy :expire_cached_json
       end
 
