@@ -30,10 +30,10 @@ describe Mongoid::CachedJson do
           example.as_json({ :properties => :all }).should == { :foo => "FOO", :bar => "BAR", "Baz" => "BAZ", :renamed_baz => "BAZ", :default_foo => "DEFAULT_FOO", :computed_field => "FOOBAR" }
         end
         it "throws an error if you ask for an undefined property type" do
-          lambda { JsonFoobar.create.as_json({ :properties => :special }) }.should raise_error(ArgumentError)
+          expect { JsonFoobar.create.as_json({ :properties => :special }) }.to raise_error(ArgumentError)
         end
         it "does not raise an error if you don't specify properties" do
-          lambda { JsonFoobar.create.as_json({ }) }.should_not raise_error
+          expect { JsonFoobar.create.as_json({ }) }.to_not raise_error
         end
         it "should hit the cache for subsequent as_json calls after the first" do
           foobar = JsonFoobar.create({ :foo => "FOO", :bar => "BAR", :baz => "BAZ" })
@@ -62,11 +62,25 @@ describe Mongoid::CachedJson do
           3.times { foobar.as_json({ :properties => :public }).should == public_result.merge({ :foo => "foo" }) }
           3.times { foobar.as_json({ :properties => :short }).should == short_result.merge({ :foo => "foo" }) }
         end
+      end
+      context "invalidate callbacks" do
+        before :each do
+          @foobar = JsonFoobar.create!(:foo => "FOO")
+        end
         it "should invalidate cache when a model is saved" do
-          foobar = JsonFoobar.create(:foo => "FOO")
-          lambda {
-            foobar.update_attributes(:foo => "BAR")
-          }.should invalidate foobar
+          expect {
+            @foobar.update_attributes!(:foo => "BAR")
+          }.to invalidate @foobar
+        end
+        it "should not invalidate cache when a model is saved without changes" do
+          expect {
+            @foobar.save!
+          }.to_not invalidate @foobar
+        end
+        it "should invalidate cache when a model is destroyed" do
+          expect {
+            @foobar.destroy
+          }.to invalidate @foobar
         end
       end
       context "many-to-one relationships" do

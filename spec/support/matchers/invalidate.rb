@@ -2,12 +2,14 @@ module CachedJsonMatchers
   class Invalidate
     def initialize(*args)
       @args = args
+      @count = 0
     end
     def matches?(proc)
       Array(@args).each do |cached_model|
-        cached_model.should_receive(:expire_cached_json)
+        cached_model.stub(:expire_cached_json!) { @count += 1 }
       end
       proc.call
+      @count > 0
     end
     def description
       "invalidates the API cache for a given model"

@@ -42,7 +42,8 @@ module Mongoid
             end
           end
         end
-        before_save :expire_cached_json
+        before_update :expire_cached_json
+        after_destroy :expire_cached_json!
       end
 
       # Materialize a cached JSON within a cache block.
@@ -204,8 +205,14 @@ module Mongoid
       as_json_cached(options)
     end
 
-    # Expire all JSON entries for this class.
+    # Expire all JSON entries for this class if the document has changed.
     def expire_cached_json
+      return unless self.changed?
+      expire_cached_json!
+    end
+
+    # Expire all JSON entries for this class.
+    def expire_cached_json!
       self.all_json_properties.each do |properties|
         [true, false].each do |is_top_level_json|
           self.all_json_versions.each do |version|
