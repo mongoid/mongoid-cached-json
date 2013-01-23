@@ -467,6 +467,18 @@ describe Mongoid::CachedJson do
           end
         end
       end
+      context "many-to-many relationships" do
+        before :each do
+          @image = FastJsonImage.create!
+        end
+        it "resolves a default empty relationship" do
+          @image.as_json({ :properties => :all }).should == { :name => "Image", :urls => [] }
+        end
+        it "resolves a nil relationship on destroy" do
+          @image.destroy
+          @image.as_json({ :properties => :all }).should == { :name => "Image", :urls => [] }
+        end
+      end
     end
   end
 end

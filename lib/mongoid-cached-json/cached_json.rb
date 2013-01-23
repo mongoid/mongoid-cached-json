@@ -126,11 +126,12 @@ module Mongoid
             clazz = reference_def[:metadata].class_name.constantize
           end
           if reference_def[:metadata].relation == Mongoid::Relations::Referenced::ManyToMany
-            reference_json = object.send(key).map do |id|
+            object_ids = object.send(key)
+            reference_json = object_ids ? object_ids.map do |id|
               materialize_keys, json = materialize_json(options, { :clazz => clazz, :id => id })
               keys = keys ? keys.merge_set(materialize_keys) : materialize_keys
               json
-            end.compact
+            end.compact : []
           end
         end
         # If we get to this point and reference_json is still nil, there's no chance we can
