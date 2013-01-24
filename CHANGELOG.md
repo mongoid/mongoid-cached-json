@@ -1,9 +1,11 @@
-Next Release
-------------
+1.4.2 (01/24/2013)
+------------------
+
 * Fix: calling `as_json` on a destroyed Mongoid 3.1 object with a HABTM relationship raises `undefined method 'map' for nil:NilClass` - [@dblock](http://github.com/dblock).
 
 1.4.1 (01/22/2013)
----------------
+------------------
+
 * Invalidate cache in `after_destroy` - [@dblock](http://github.com/dblock).
 * Do not invalidate cache when the document is created - [@dblock](http://github.com/dblock).
 * Invalidate cache in `after_update` instead of `before_update` - [@dblock](http://github.com/dblock).
