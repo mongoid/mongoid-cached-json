@@ -1,5 +1,5 @@
-Next Release
-------------
+1.4.3 (01/25/2013)
+------------------
 
 * For caches that support `read_multi`, do not attempt to fetch JSON a second time via `fetch`, write it directly to cache - [@dblock](https://github.com/dblock).
 
