@@ -13,6 +13,9 @@ describe Mongoid::CachedJson do
         Mongoid::CachedJson.configure do |config|
           config.cache = ActiveSupport::Cache.lookup_store(cache_store)
         end
+        if cache_store == :memory_store && Mongoid::CachedJson.config.cache.respond_to?(:read_multi)
+          Mongoid::CachedJson.config.cache.instance_eval { undef :read_multi }
+        end
       end
       after :each do
         Mongoid::CachedJson::Config.cache = @cache
@@ -52,15 +55,15 @@ describe Mongoid::CachedJson do
           all_result = foobar.as_json({ :properties => :all })
           public_result = foobar.as_json({ :properties => :public })
           short_result = foobar.as_json({ :properties => :short })
-          foobar.foo = "foo"
+          foobar.foo = "updated"
           # Not saved yet, so we should still be hitting the cache
           3.times { foobar.as_json({ :properties => :all }).should == all_result }
           3.times { foobar.as_json({ :properties => :public }).should == public_result }
           3.times { foobar.as_json({ :properties => :short }).should == short_result }
           foobar.save
-          3.times { foobar.as_json({ :properties => :all }).should == all_result.merge({ :foo => "foo", :computed_field => "fooBAR" }) }
-          3.times { foobar.as_json({ :properties => :public }).should == public_result.merge({ :foo => "foo" }) }
-          3.times { foobar.as_json({ :properties => :short }).should == short_result.merge({ :foo => "foo" }) }
+          3.times { foobar.as_json({ :properties => :all }).should == all_result.merge({ :foo => "updated", :computed_field => "updatedBAR" }) }
+          3.times { foobar.as_json({ :properties => :public }).should == public_result.merge({ :foo => "updated" }) }
+          3.times { foobar.as_json({ :properties => :short }).should == short_result.merge({ :foo => "updated" }) }
         end
       end
       context "invalidate callbacks" do
@@ -336,13 +339,20 @@ describe Mongoid::CachedJson do
       end
       context "with cache disabled" do
         before :each do
-          Mongoid::CachedJson.config.disable_caching = true
+          Mongoid::CachedJson.config.stub(:disable_caching).and_return(true)
         end
         it "forces a cache miss" do
           example = JsonFoobar.create({ :foo => "FOO", :baz => "BAZ", :bar => "BAR" })
-          Mongoid::CachedJson.config.cache.should_receive(:fetch).with("as_json/unspecified/JsonFoobar/#{example.id}/short/true", { :force => true }).twice
-          example.as_json
-          example.as_json
+          key = "as_json/unspecified/JsonFoobar/#{example.id}/short/true"
+          case cache_store
+          when :memory_store then
+            Mongoid::CachedJson.config.cache.should_receive(:fetch).with(key, { :force => true }).twice
+          when :dalli_store then
+            Mongoid::CachedJson.config.cache.should_not_receive(:write)
+          else
+            raise ArgumentError, "invalid cache store: #{cache_store}"
+          end
+          2.times { example.as_json }
         end
       end
       context "versioning" do

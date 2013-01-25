@@ -157,21 +157,31 @@ module Mongoid
     # Check whether the cache supports :read_multi and prefetch the data if it does.
     def self.materialize_json_references_with_read_multi(key_refs, partial_json)
       unfrozen_keys = key_refs.keys.to_a.map(&:dup) if key_refs # see https://github.com/mperham/dalli/pull/320
-      local_cache = unfrozen_keys && Mongoid::CachedJson.config.cache.respond_to?(:read_multi) ? Mongoid::CachedJson.config.cache.read_multi(unfrozen_keys) : {}
-      Mongoid::CachedJson.materialize_json_references(key_refs, local_cache) if key_refs
+      read_multi = unfrozen_keys && Mongoid::CachedJson.config.cache.respond_to?(:read_multi)
+      local_cache = read_multi ? Mongoid::CachedJson.config.cache.read_multi(unfrozen_keys) : {}
+      Mongoid::CachedJson.materialize_json_references(key_refs, local_cache, read_multi) if key_refs
       partial_json
     end
 
     # Materialize all the JSON references in place.
-    def self.materialize_json_references(key_refs, local_cache = {})
+    def self.materialize_json_references(key_refs, local_cache = {}, read_multi = false)
       key_refs.each_pair do |key, refs|
         refs.each do |ref|
           _ref = ref.delete(:_ref)
           key = _ref[:_key]
           fetched_json = local_cache[key] if local_cache.has_key?(key)
-          fetched_json ||= (local_cache[key] = Mongoid::CachedJson.config.cache.fetch(key, { :force => !! Mongoid::CachedJson.config.disable_caching }) do
-            _ref[:_clazz].materialize_cached_json(* _ref[:_materialize_cached_json])
-          end)
+          if ! fetched_json
+            if read_multi
+              # no value in cache, materialize and write
+              fetched_json = (local_cache[key] = _ref[:_clazz].materialize_cached_json(* _ref[:_materialize_cached_json]))
+              Mongoid::CachedJson.config.cache.write(key, fetched_json) unless !! Mongoid::CachedJson.config.disable_caching
+            else
+              # fetch/write from cache
+              fetched_json = (local_cache[key] = Mongoid::CachedJson.config.cache.fetch(key, { :force => !! Mongoid::CachedJson.config.disable_caching }) do
+                _ref[:_clazz].materialize_cached_json(* _ref[:_materialize_cached_json])
+              end)
+            end
+          end
           if fetched_json
             ref.merge! fetched_json
           elsif _ref[:_parent]
