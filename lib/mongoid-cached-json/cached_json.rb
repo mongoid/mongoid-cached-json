@@ -20,7 +20,7 @@ module Mongoid
       # @since 1.0
       def json_fields(defs)
         self.hide_as_child_json_when = defs.delete(:hide_as_child_json_when) || lambda { |a| false }
-        self.all_json_properties = [:short, :public, :all]
+        self.all_json_properties = [ :short, :public, :all ]
         cached_json_defs = Hash[defs.map { |k,v| [k, { :type => :callable, :properties => :short, :definition => k }.merge(v)] }]
         self.cached_json_field_defs = {}
         self.cached_json_reference_defs = {}
@@ -30,10 +30,10 @@ module Mongoid
         end.flatten.compact.uniq
         self.all_json_properties.each_with_index do |property, i|
           self.cached_json_field_defs[property] = Hash[cached_json_defs.find_all do |field, definition|
-            self.all_json_properties.find_index(definition[:properties]) <= i and definition[:type] == :callable
+            self.all_json_properties.find_index(definition[:properties]) <= i && definition[:type] == :callable
           end]
           self.cached_json_reference_defs[property] = Hash[cached_json_defs.find_all do |field, definition|
-            self.all_json_properties.find_index(definition[:properties]) <= i and definition[:type] == :reference
+            self.all_json_properties.find_index(definition[:properties]) <= i && definition[:type] == :reference
           end]
           # If the field is a reference and is just specified as a symbol, reflect on it to get metadata
           self.cached_json_reference_defs[property].to_a.each do |field, definition|
@@ -89,9 +89,9 @@ module Mongoid
         reference_defs = clazz.cached_json_reference_defs[options[:properties]]
         if !reference_defs.empty?
           object_reference = clazz.where({ :_id => id }).first if !object_reference
-          if object_reference and (is_top_level_json or options[:properties] == :all or !clazz.hide_as_child_json_when.call(object_reference))
+          if object_reference && (is_top_level_json || options[:properties] == :all || !clazz.hide_as_child_json_when.call(object_reference))
             json.merge!(Hash[reference_defs.map do |field, definition|
-              json_properties_type = (options[:properties] == :all) ? :all : :short
+              json_properties_type = definition[:reference_properties] || ((options[:properties] == :all) ? :all : :short)
               reference_keys, reference = clazz.resolve_json_reference(options.merge({ :properties => json_properties_type, :is_top_level_json => false}), object_reference, field, definition)
               if (reference.is_a?(Hash) && ref = reference[:_ref])
                 ref[:_parent] = json

@@ -101,6 +101,37 @@ Defining Fields
 * `:properties` can be one of `:short`, `:public`, `:all`, in this order
 * `:version` can be a single version for this field to appear in
 * `:versions` can be an array of versions for this field to appear in
+* `:reference_properties` can be one of `:short`, `:public`, `:all`, default will select the reference properties format dynamically (see below)
+
+Reference Properties
+--------------------
+
+When calling `as_json` on a model that contains references to other models the value of the `:properties` option passed into the `as_json` call will be chosen as follows:
+
+* Use the value of the `:reference_properties` option, if specified.
+* For `:short` JSON, use `:short`.
+* For `:public` JSON, use `:short`.
+* For `:all` JSON, use `:all`.
+
+The dynamic selection where `:public` generates `:short` references allows to return smaller embedded collections, while `:all` allows to fetch deep data. Another way of looking at this is to say that a field in a `:short` JSON appears in collections, a field declared in the `:public` JSON appears for all users and the field declared in the `:all` JSON appears for object owners only.
+
+To override this behavior and always return the `:short` JSON for a child reference, use `:reference_properties`. In the following example we would want `Person.as_json({ :properties => :all })` to return the social security number for that person, but not for all their friends.
+
+``` ruby
+class Person
+  include Mongoid::Document
+  include Mongoid::CachedJson
+
+  field :name
+  field :ssn
+  has_and_belongs_to_many :friends, :class_name => "Person"
+
+  json_fields \
+    name: {},
+    ssn: { properties: :all }
+    friends: { properties: :public, :reference_properties => :short }
+
+end
 
 Versioning
 ----------

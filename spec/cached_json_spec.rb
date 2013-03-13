@@ -142,6 +142,14 @@ describe Mongoid::CachedJson do
           employee.save
           3.times { manager.as_json({ :properties => :short }).should == { :name => "New JsonManager", :employees => [ { :name => "New JsonEmployee" } ] } }
         end
+        context "reference_properties" do
+          it "limits the json fields of a child relationship" do
+            supervisor = JsonSupervisor.create({ :name => "JsonSupervisor" })
+            manager = JsonManager.create({ :name => "JsonManager", supervisor: supervisor })
+            json = supervisor.as_json({ :properties => :all })
+            json[:managers][0].has_key?(:ssn).should be_false
+          end
+        end
       end
       context "one-to-one relationships" do
         before(:each) do
