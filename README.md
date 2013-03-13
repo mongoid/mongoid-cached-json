@@ -132,6 +132,7 @@ class Person
     friends: { properties: :public, :reference_properties => :short }
 
 end
+```
 
 Versioning
 ----------
