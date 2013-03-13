@@ -127,9 +127,9 @@ class Person
   has_and_belongs_to_many :friends, :class_name => "Person"
 
   json_fields \
-    name: {},
-    ssn: { properties: :all }
-    friends: { properties: :public, :reference_properties => :short }
+    :name => {},
+    :ssn => { :properties => :all }
+    friends: { :properties => :public, :reference_properties => :short }
 
 end
 ```

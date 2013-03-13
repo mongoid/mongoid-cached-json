@@ -1,5 +1,5 @@
-1.5 (Next Release)
-------------------
+1.5 (04/13/2013)
+----------------
 
 * Added `:reference_properties` that disables dynamic selection of the type of JSON to return for a reference - [@dblock](https://github.com/dblock).
 
