@@ -49,9 +49,7 @@ describe Hash do
     it "uses a local cache to fetch repeated objects" do
       tool = Tool.create!({ :name => "hammer" })
       tool_key = "as_json/unspecified/Tool/#{tool.id}/all/true"
-      Mongoid::CachedJson.config.cache.should_receive(:read_multi).once.with([
-        tool_key
-      ]).and_return({
+      Mongoid::CachedJson.config.cache.should_receive(:read_multi).once.with(tool_key).and_return({
         tool_key => { :x => :y }
       })
       {
