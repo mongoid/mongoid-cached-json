@@ -42,7 +42,7 @@ describe Mongoid::Criteria do
         "as_json/unspecified/ToolBox/#{tool_box.id}/all/false",
         "as_json/unspecified/Tool/#{tool2.id}/all/true"
       ]
-      Mongoid::CachedJson.config.cache.should_receive(:read_multi).once.with(keys).and_return({
+      Mongoid::CachedJson.config.cache.should_receive(:read_multi).once.with(*keys).and_return({
         keys[0] => { :x => :y },
         keys[1] => { :x => :y },
         keys[2] => { :x => :y }
@@ -62,7 +62,7 @@ describe Mongoid::Criteria do
         "as_json/unspecified/ToolBox/#{tool_box.id}/all/false",
         "as_json/unspecified/Tool/#{tool2.id}/all/true"
       ]
-      Mongoid::CachedJson.config.cache.should_receive(:read_multi).once.with(keys).and_return({
+      Mongoid::CachedJson.config.cache.should_receive(:read_multi).once.with(*keys).and_return({
         keys[0] => { :x => :y },
         keys[1] => { :x => :y }
       })

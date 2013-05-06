@@ -1,7 +1,7 @@
 source "http://rubygems.org"
 
 gem "activesupport"
-gem "mongoid"
+gem "mongoid", ">= 3.0.0"
 gem "hpricot"
 
 group :development do
