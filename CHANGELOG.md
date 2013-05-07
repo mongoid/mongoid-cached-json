@@ -1,4 +1,4 @@
-1.5.1 (Next Release)
+1.5.1 (05/07/2013)
 --------------------
 
 * Fixed `read_multi` calls so as to enable proper cache reading behavior in stores other than `ActiveSupport::Cache::DalliStore` - [@macreery](http://github.com/macreery)
