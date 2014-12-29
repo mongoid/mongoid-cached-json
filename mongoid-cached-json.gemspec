@@ -4,65 +4,64 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = "mongoid-cached-json"
-  s.version = "1.5.1"
+  s.name = 'mongoid-cached-json'
+  s.version = '1.5.1'
 
-  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Aaron Windsor", "Daniel Doubrovkine", "Frank Macreery"]
-  s.date = "2013-05-07"
-  s.description = "Cached-json is a DSL for describing JSON representations of Mongoid models."
-  s.email = "dblock@dblock.org"
+  s.required_rubygems_version = Gem::Requirement.new('>= 0') if s.respond_to? :required_rubygems_version=
+  s.authors = ['Aaron Windsor', 'Daniel Doubrovkine', 'Frank Macreery']
+  s.date = '2013-05-07'
+  s.description = 'Cached-json is a DSL for describing JSON representations of Mongoid models.'
+  s.email = 'dblock@dblock.org'
   s.extra_rdoc_files = [
-    "LICENSE.md",
-    "README.md"
+    'LICENSE.md',
+    'README.md'
   ]
   s.files = [
-    "lib/mongoid-cached-json.rb",
-    "lib/mongoid-cached-json/array.rb",
-    "lib/mongoid-cached-json/cached_json.rb",
-    "lib/mongoid-cached-json/config.rb",
-    "lib/mongoid-cached-json/hash.rb",
-    "lib/mongoid-cached-json/key_references.rb",
-    "lib/mongoid-cached-json/mongoid_criteria.rb",
-    "lib/mongoid-cached-json/version.rb"
+    'lib/mongoid-cached-json.rb',
+    'lib/mongoid-cached-json/array.rb',
+    'lib/mongoid-cached-json/cached_json.rb',
+    'lib/mongoid-cached-json/config.rb',
+    'lib/mongoid-cached-json/hash.rb',
+    'lib/mongoid-cached-json/key_references.rb',
+    'lib/mongoid-cached-json/mongoid_criteria.rb',
+    'lib/mongoid-cached-json/version.rb'
   ]
-  s.homepage = "http://github.com/dblock/mongoid-cached-json"
-  s.licenses = ["MIT"]
-  s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.24"
-  s.summary = "Effective model-level JSON caching for the Mongoid ODM."
+  s.homepage = 'http://github.com/dblock/mongoid-cached-json'
+  s.licenses = ['MIT']
+  s.require_paths = ['lib']
+  s.rubygems_version = '1.8.24'
+  s.summary = 'Effective model-level JSON caching for the Mongoid ODM.'
 
-  if s.respond_to? :specification_version then
+  if s.respond_to? :specification_version
     s.specification_version = 3
 
-    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<activesupport>, [">= 0"])
-      s.add_runtime_dependency(%q<mongoid>, [">= 3.0.0"])
-      s.add_runtime_dependency(%q<hpricot>, [">= 0"])
-      s.add_development_dependency(%q<rspec>, ["~> 2.5"])
-      s.add_development_dependency(%q<bundler>, ["~> 1.0"])
-      s.add_development_dependency(%q<jeweler>, ["~> 1.6"])
-      s.add_development_dependency(%q<yard>, ["~> 0.6"])
-      s.add_development_dependency(%q<dalli>, ["~> 2.6"])
+    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0')
+      s.add_runtime_dependency('activesupport', ['>= 0'])
+      s.add_runtime_dependency('mongoid', ['>= 3.0.0'])
+      s.add_runtime_dependency('hpricot', ['>= 0'])
+      s.add_development_dependency('rspec', ['~> 2.5'])
+      s.add_development_dependency('bundler', ['~> 1.0'])
+      s.add_development_dependency('jeweler', ['~> 1.6'])
+      s.add_development_dependency('yard', ['~> 0.6'])
+      s.add_development_dependency('dalli', ['~> 2.6'])
     else
-      s.add_dependency(%q<activesupport>, [">= 0"])
-      s.add_dependency(%q<mongoid>, [">= 3.0.0"])
-      s.add_dependency(%q<hpricot>, [">= 0"])
-      s.add_dependency(%q<rspec>, ["~> 2.5"])
-      s.add_dependency(%q<bundler>, ["~> 1.0"])
-      s.add_dependency(%q<jeweler>, ["~> 1.6"])
-      s.add_dependency(%q<yard>, ["~> 0.6"])
-      s.add_dependency(%q<dalli>, ["~> 2.6"])
+      s.add_dependency('activesupport', ['>= 0'])
+      s.add_dependency('mongoid', ['>= 3.0.0'])
+      s.add_dependency('hpricot', ['>= 0'])
+      s.add_dependency('rspec', ['~> 2.5'])
+      s.add_dependency('bundler', ['~> 1.0'])
+      s.add_dependency('jeweler', ['~> 1.6'])
+      s.add_dependency('yard', ['~> 0.6'])
+      s.add_dependency('dalli', ['~> 2.6'])
     end
   else
-    s.add_dependency(%q<activesupport>, [">= 0"])
-    s.add_dependency(%q<mongoid>, [">= 3.0.0"])
-    s.add_dependency(%q<hpricot>, [">= 0"])
-    s.add_dependency(%q<rspec>, ["~> 2.5"])
-    s.add_dependency(%q<bundler>, ["~> 1.0"])
-    s.add_dependency(%q<jeweler>, ["~> 1.6"])
-    s.add_dependency(%q<yard>, ["~> 0.6"])
-    s.add_dependency(%q<dalli>, ["~> 2.6"])
+    s.add_dependency('activesupport', ['>= 0'])
+    s.add_dependency('mongoid', ['>= 3.0.0'])
+    s.add_dependency('hpricot', ['>= 0'])
+    s.add_dependency('rspec', ['~> 2.5'])
+    s.add_dependency('bundler', ['~> 1.0'])
+    s.add_dependency('jeweler', ['~> 1.6'])
+    s.add_dependency('yard', ['~> 0.6'])
+    s.add_dependency('dalli', ['~> 2.6'])
   end
 end
-

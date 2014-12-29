@@ -7,7 +7,7 @@ describe Mongoid::CachedJson::Config do
   after :each do
     Mongoid::CachedJson::Config.cache = @cache
   end
-  it "configures a cache store" do
+  it 'configures a cache store' do
     cache = Class.new
     Mongoid::CachedJson.configure do |config|
       config.cache = cache
@@ -15,7 +15,7 @@ describe Mongoid::CachedJson::Config do
     cache.should_receive(:fetch).once
     JsonFoobar.new.as_json
   end
-  it "sets disable_caching to false" do
+  it 'sets disable_caching to false' do
     Mongoid::CachedJson.config.disable_caching.should be_false
   end
 end

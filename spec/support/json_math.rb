@@ -5,7 +5,5 @@ class JsonMath
   field :number
 
   json_fields \
-    :number => {}
-    
+    number: {}
 end
-

@@ -7,7 +7,7 @@ begin
   Bundler.setup(:default, :development)
 rescue Bundler::BundlerError => e
   $stderr.puts e.message
-  $stderr.puts "Run `bundle install` to install missing gems"
+  $stderr.puts 'Run `bundle install` to install missing gems'
   exit e.status_code
 end
 
@@ -15,14 +15,14 @@ require 'rake'
 
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
-  gem.name = "mongoid-cached-json"
-  gem.homepage = "http://github.com/dblock/mongoid-cached-json"
-  gem.license = "MIT"
-  gem.summary = "Effective model-level JSON caching for the Mongoid ODM."
-  gem.description = "Cached-json is a DSL for describing JSON representations of Mongoid models."
-  gem.email = "dblock@dblock.org"
+  gem.name = 'mongoid-cached-json'
+  gem.homepage = 'http://github.com/dblock/mongoid-cached-json'
+  gem.license = 'MIT'
+  gem.summary = 'Effective model-level JSON caching for the Mongoid ODM.'
+  gem.description = 'Cached-json is a DSL for describing JSON representations of Mongoid models.'
+  gem.email = 'dblock@dblock.org'
   gem.version = Mongoid::CachedJson::VERSION
-  gem.authors = [ "Aaron Windsor", "Daniel Doubrovkine", "Frank Macreery" ]
+  gem.authors = ['Aaron Windsor', 'Daniel Doubrovkine', 'Frank Macreery']
   gem.files = Dir.glob('lib/**/*')
 end
 
@@ -37,11 +37,9 @@ RSpec::Core::RakeTask.new(:spec) do |spec|
   spec.pattern = files
 end
 
-task :default => :spec
-
 require 'rdoc/task'
 Rake::RDocTask.new do |rdoc|
-  version = File.exist?('VERSION') ? File.read('VERSION') : ""
+  version = File.exist?('VERSION') ? File.read('VERSION') : ''
 
   rdoc.rdoc_dir = 'rdoc'
   rdoc.title = "mongoid-cached-json #{version}"
@@ -50,3 +48,7 @@ Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
+require 'rubocop/rake_task'
+RuboCop::RakeTask.new
+
+task default: [:rubocop, :spec]

@@ -6,7 +6,6 @@ class SecretParent
   has_one :sometimes_secret
 
   json_fields \
-    :name => {},
-    :child => { :definition => :sometimes_secret, :type => :reference }
+    name: {},
+    child: { definition: :sometimes_secret, type: :reference }
 end
-

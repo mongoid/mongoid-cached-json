@@ -1,7 +1,12 @@
+Next
+----
+
+* Implemented RuboCop, Ruby-style linter - [@dblock](http://github.com/dblock).
+
 1.5.1 (05/07/2013)
 --------------------
 
-* Fixed `read_multi` calls so as to enable proper cache reading behavior in stores other than `ActiveSupport::Cache::DalliStore` - [@macreery](http://github.com/macreery)
+* Fixed `read_multi` calls so as to enable proper cache reading behavior in stores other than `ActiveSupport::Cache::DalliStore` - [@macreery](http://github.com/macreery).
 
 1.5 (04/13/2013)
 ----------------

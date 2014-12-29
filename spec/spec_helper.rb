@@ -18,4 +18,3 @@ RSpec.configure do |config|
     Mongoid::CachedJson.config.reset!
   end
 end
-

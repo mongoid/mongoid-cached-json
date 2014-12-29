@@ -1,6 +1,5 @@
 module Mongoid
   class Criteria
-
     def as_json_partial(options = {})
       json_keys = nil
       json = map do |i|
@@ -12,13 +11,12 @@ module Mongoid
           i.as_json(options)
         end
       end
-      [ json_keys, json ]
+      [json_keys, json]
     end
 
     def as_json(options = {})
       json_keys, json = as_json_partial(options)
       Mongoid::CachedJson.materialize_json_references_with_read_multi(json_keys, json)
     end
-
   end
 end

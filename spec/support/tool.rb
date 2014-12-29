@@ -6,8 +6,6 @@ class Tool
   belongs_to :tool_box
 
   json_fields \
-    :name => {},
-    :tool_box => { :type => :reference }
-
+    name: {},
+    tool_box: { type: :reference }
 end
-

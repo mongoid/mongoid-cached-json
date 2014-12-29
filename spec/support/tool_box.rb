@@ -6,7 +6,5 @@ class ToolBox
   has_many :tools
 
   json_fields \
-    :color => {}
-
+    color: {}
 end
-

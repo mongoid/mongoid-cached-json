@@ -7,9 +7,7 @@ class JsonTransform
   field :nochange
 
   json_fields \
-    :upcase => { :transform => :upcase },
-    :downcase => { :transform => :downcase },
-    :nochange => {}
-    
+    upcase: { transform: :upcase },
+    downcase: { transform: :downcase },
+    nochange: {}
 end
-

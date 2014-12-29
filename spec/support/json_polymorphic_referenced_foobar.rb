@@ -5,6 +5,5 @@ class JsonPolymorphicReferencedFoobar
   has_one :json_parent_foobar
 
   json_fields \
-    :foo => { :properties => :short }
-
+    foo: { properties: :short }
 end

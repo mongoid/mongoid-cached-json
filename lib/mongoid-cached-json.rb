@@ -8,4 +8,3 @@ require 'mongoid-cached-json/mongoid_criteria'
 require 'mongoid-cached-json/version'
 require 'mongoid-cached-json/config'
 require 'mongoid-cached-json/cached_json'
-

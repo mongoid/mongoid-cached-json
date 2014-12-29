@@ -5,6 +5,5 @@ class JsonPolymorphicEmbeddedFoobar
   embedded_in :json_parent_foobar
 
   json_fields \
-    :foo => { :properties => :short }
-
+    foo: { properties: :short }
 end

@@ -3,7 +3,6 @@
 module Mongoid
   module CachedJson
     class KeyReferences < Hash
-
       def merge_set(keys)
         if keys
           keys.each_pair do |k, jsons|
@@ -19,8 +18,6 @@ module Mongoid
         self[key] << json
         self
       end
-
     end
   end
 end
-
