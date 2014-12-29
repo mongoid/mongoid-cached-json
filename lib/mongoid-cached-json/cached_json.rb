@@ -61,7 +61,7 @@ module Mongoid
               json_value = t.call(field, definition, json_value)
             end
             [field, json_value]
-          end]
+          end.compact]
         end
       end
 
