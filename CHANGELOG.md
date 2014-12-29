@@ -2,6 +2,7 @@ Next
 ----
 
 * Implemented RuboCop, Ruby-style linter - [@dblock](http://github.com/dblock).
+* Upgraded to RSpec 3.1 - [@dblock](http://github.com/dblock).
 
 1.5.1 (05/07/2013)
 --------------------

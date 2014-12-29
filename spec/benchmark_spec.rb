@@ -88,17 +88,17 @@ describe Mongoid::CachedJson do
           times << Benchmark.realtime do
             [:short, :public, :all].each do |properties|
               instance = instance_variable_get("@#{record}".to_sym)
-              instance.should_not be_nil
+              expect(instance).not_to be_nil
               @n.times do
                 # instance
                 json = instance.as_json(properties: properties)
-                json.should_not be_nil
-                json.should_not == {}
+                expect(json).not_to be_nil
+                expect(json).not_to eq({})
               end
               # class
               if instance.class.respond_to?(:all)
                 json = instance.class.all.as_json(properties: properties)
-                json.should_not be_nil
+                expect(json).not_to be_nil
               end
             end
           end

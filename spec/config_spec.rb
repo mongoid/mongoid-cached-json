@@ -12,10 +12,10 @@ describe Mongoid::CachedJson::Config do
     Mongoid::CachedJson.configure do |config|
       config.cache = cache
     end
-    cache.should_receive(:fetch).once
+    expect(cache).to receive(:fetch).once
     JsonFoobar.new.as_json
   end
   it 'sets disable_caching to false' do
-    Mongoid::CachedJson.config.disable_caching.should be_false
+    expect(Mongoid::CachedJson.config.disable_caching).to be_falsey
   end
 end

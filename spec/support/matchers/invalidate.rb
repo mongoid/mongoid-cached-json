@@ -1,31 +1,22 @@
-module CachedJsonMatchers
-  class Invalidate
-    def initialize(*args)
-      @args = args
-      @count = 0
-    end
+RSpec::Matchers.define :invalidate do |target|
+  supports_block_expectations
 
-    def matches?(proc)
-      Array(@args).each do |cached_model|
-        cached_model.stub(:expire_cached_json) { @count += 1 }
+  match do |block|
+    call_counts = 0
+    Array(target).each do |cached_model|
+      allow(cached_model).to receive(:expire_cached_json) do
+        call_counts += 1
       end
-      proc.call
-      @count > 0
     end
-
-    def description
-      'invalidates the API cache for a given model'
-    end
-
-    def failure_message
-      'expected cache to be invalidated'
-    end
-
-    def negative_failure_message
-      'expected cache not to be invalidated'
-    end
+    block.call if block.is_a?(Proc)
+    call_counts == Array(target).count
   end
-  def invalidate(*args)
-    CachedJsonMatchers::Invalidate.new(*args)
+
+  failure_message do
+    'target cache to be invalidated, but it was not'
+  end
+
+  failure_message_when_negated do
+    'target cache to be invalidated, but it was not'
   end
 end
