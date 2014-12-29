@@ -18,7 +18,7 @@ Quickstart
 
 Add `mongoid-cached-json` to your Gemfile.
 
-    gem "mongoid-cached-json"
+    gem 'mongoid-cached-json'
 
 Include `Mongoid::CachedJson` in your models.
 
@@ -32,8 +32,8 @@ class Gadget
   belongs_to :widget
 
   json_fields \
-    :name => { },
-    :extras => { :properties => :public }
+    name: {},
+    extras: { properties: :public }
 
 end
 
@@ -44,8 +44,8 @@ class Widget
   has_many :gadgets
 
   json_fields \
-    :name => { },
-    :gadgets => { :type => :reference, :properties => :public }
+    name: {},
+    gadgets: { type: :reference, properties: :public }
 
 end
 ```
@@ -59,13 +59,13 @@ widget = Widget.first
 widget.as_json
 
 # equivalent to the above
-widget.as_json({ :properties => :short })
+widget.as_json(properties: :short)
 
 # `:public` version of the JSON, `gadgets` returned with `:short` JSON, no `:extras`
-widget.as_json({ :properties => :public })
+widget.as_json(properties: :public)
 
 # `:all` version of the JSON, `gadgets` returned with `:all` JSON, including `:extras`
-widget.as_json({ :properties => :all })
+widget.as_json(properties: :all)
 ```
 
 Configuration
@@ -92,11 +92,11 @@ Defining Fields
 
 `Mongoid::CachedJson` supports the following options:
 
-* `:hide_as_child_json_when` is an optional function that hides the child JSON from `as_json` parent objects, eg. `cached_json :hide_as_child_json_when => lambda { |instance| ! instance.is_secret? }`
+* `:hide_as_child_json_when` is an optional function that hides the child JSON from `as_json` parent objects, eg. `cached_json hide_as_child_json_when: lambda { |instance| ! instance.secret? }`
 
 `Mongoid::CachedJson` field definitions support the following options:
 
-* `:definition` can be a symbol or an anonymous function, eg. `:description => { :definition => :name }` or `:description => { :definition => lambda { |instance| instance.name } }`
+* `:definition` can be a symbol or an anonymous function, eg. `description: { definition: :name }` or `description: { definition: lambda { |instance| instance.name } }`
 * `:type` can be `:reference`, required for referenced objects
 * `:properties` can be one of `:short`, `:public`, `:all`, in this order
 * `:version` can be a single version for this field to appear in
@@ -115,7 +115,7 @@ When calling `as_json` on a model that contains references to other models the v
 
 The dynamic selection where `:public` generates `:short` references allows to return smaller embedded collections, while `:all` allows to fetch deep data. Another way of looking at this is to say that a field in a `:short` JSON appears in collections, a field declared in the `:public` JSON appears for all users and the field declared in the `:all` JSON appears for object owners only.
 
-To override this behavior and always return the `:short` JSON for a child reference, use `:reference_properties`. In the following example we would want `Person.as_json({ :properties => :all })` to return the social security number for that person, but not for all their friends.
+To override this behavior and always return the `:short` JSON for a child reference, use `:reference_properties`. In the following example we would want `Person.as_json(properties: :all)` to return the social security number for that person, but not for all their friends.
 
 ``` ruby
 class Person
@@ -124,12 +124,12 @@ class Person
 
   field :name
   field :ssn
-  has_and_belongs_to_many :friends, :class_name => "Person"
+  has_and_belongs_to_many :friends, class_name: 'Person'
 
   json_fields \
-    :name => {},
-    :ssn => { :properties => :all }
-    friends: { :properties => :public, :reference_properties => :short }
+    name: {},
+    ssn: { properties: :all },
+    friends: { properties: :public, reference_properties: :short }
 
 end
 ```
@@ -148,24 +148,24 @@ class Person
   field :last
 
   def name
-    [ first, middle, last ].compact.join(" ")
+    [ first, middle, last ].compact.join(' ')
   end
 
   json_fields \
-    :first => { :versions => [ :v2, :v3 ] },
-    :last => { :versions => [ :v2, :v3 ] },
-    :middle => { :versions => [ :v2, :v3 ] },
-    :born => { :versions => :v3 },
-    :name => { :definition => :name }
+    first: { versions: [ :v2, :v3 ] },
+    last: { versions: [ :v2, :v3 ] },
+    middle: { versions: [ :v2, :v3 ] },
+    born: { versions: :v3 },
+    name: { definition: :name }
 
 end
 ```
 
 ``` ruby
-person = Person.create({ :first => "John", :middle => "F.", :last => "Kennedy", :born => "May 29, 1917" })
-person.as_json # { :name => "John F. Kennedy" }
-person.as_json({ :version => :v2 }) # { :first => "John", :middle => "F.", :last => "Kennedy", :name => "John F. Kennedy" }
-person.as_json({ :version => :v3 }) # { :first => "John", :middle => "F.", :last => "Kennedy", :name => "John F. Kennedy", :born => "May 29, 1917" }
+person = Person.create(first: 'John', middle: 'F.', last: 'Kennedy', born: 'May 29, 1917')
+person.as_json # { name: 'John F. Kennedy' }
+person.as_json(version: :v2) # { first: 'John', middle: 'F.', last: 'Kennedy', name: 'John F. Kennedy' }
+person.as_json(version: :v3) # { first: 'John', middle: 'F.', last: 'Kennedy', name: 'John F. Kennedy', born: 'May 29, 1917' }
 ```
 
 Transformations
@@ -182,14 +182,14 @@ class Widget
   field :description
 
   json_fields \
-    :name => { :trusted => true },
-    :description => { }
+    name: { trusted: true },
+    description: {}
 end
 ```
 
 ``` ruby
   Mongoid::CachedJson.config.transform do |field, definition, value|
-    trusted = !! definition[:trusted]
+    trusted = !!definition[:trusted]
     trusted ? value : CGI.escapeHTML(value)
   end
 ```
@@ -210,12 +210,12 @@ Testing JSON
 This library overrides `as_json`, hence testing JSON results can be done at model level.
 
 ``` ruby
-describe "as_json" do
+describe 'as_json' do
   before :each do
-    @person = Person.create!({ :first => "John", :last => "Doe" })
+    @person = Person.create!(first: 'John', last: 'Doe')
   end
-  it "returns name" do
-    @person.as_json({ :properties => :public })[:name].should == "John Doe"
+  it 'returns name' do
+    expect(@person.as_json(properties: :public)[:name]).to eql 'John Doe'
   end
 end
 ```
@@ -223,13 +223,13 @@ end
 It's also common to test the results of the API using the [Pathy](https://github.com/twoism/pathy) library.
 
 ``` ruby
-describe "as_json" do
+describe 'as_json' do
   before :each do
-    person = Person.create!({ :first => "John", :last => "Doe" })
+    person = Person.create!(first: 'John', last: 'Doe')
   end
-  it "returns name" do
+  it 'returns name' do
     get "/api/person/#{person.id}"
-    response.body.at_json_path("name").should == "John Doe"
+    expect(response.body.at_json_path('name')).to eql 'John Doe'
   end
 end
 ```
@@ -240,24 +240,24 @@ Testing Cache Invalidation
 Cache is invalidated by calling `:expire_cached_json` on an instance.
 
 ``` ruby
-describe "updating a person" do
+describe 'updating a person' do
   before :each
-    @person = Person.create!({ :name => "John Doe" })
+    @person = Person.create!(name: 'John Doe')
   end
-  it "invalidates cache" do
-    @person.should_receive :expire_cached_json
-    @person.update_attributes!({ :name => "updated" }
+  it 'invalidates cache' do
+    expect(@person).to receive(:expire_cached_json)
+    @person.update_attributes!(name: 'updated')
   end
 end
 ```
-You may also want to use [this RSpec matcher](https://github.com/dblock/mongoid-cached-json/blob/master/spec/support/matchers/invalidate.rb).
+You may also want to use [this RSpec matcher](spec/support/matchers/invalidate.rb).
 
 ```ruby
-describe "updating a person" do
-  it "invalidates cache" do
-    lambda {
-      @person.update_attributes!({ :name => "updated" }
-    }.should invalidate @person
+describe 'updating a person' do
+  it 'invalidates cache' do
+    expect do
+      @person.update_attributes!(name: 'updated')
+    end.to invalidate @person
   end
 end
 ```
@@ -288,4 +288,4 @@ Copyright and License
 
 MIT License, see [LICENSE](https://github.com/dblock/mongoid-cached-json/blob/master/LICENSE.md) for details.
 
-(c) 2012 [Art.sy Inc.](http://artsy.github.com) and [Contributors](https://github.com/dblock/mongoid-cached-json/blob/master/CHANGELOG.md)
+(c) 2012-2014 [Artsy](https://artsy.net) and [Contributors](CHANGELOG.md)
