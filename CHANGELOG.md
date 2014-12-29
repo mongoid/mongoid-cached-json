@@ -1,5 +1,5 @@
-Next
-----
+1.5.2 (29/12/2014)
+------------------
 
 * Fixed support for Ruby 2.2.0 - [@dblock](http://github.com/dblock).
 * Implemented RuboCop, Ruby-style linter - [@dblock](http://github.com/dblock).
