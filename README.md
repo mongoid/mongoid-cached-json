@@ -1,5 +1,10 @@
-Mongoid::CachedJson [![Build Status](https://secure.travis-ci.org/dblock/mongoid-cached-json.png)](http://travis-ci.org/dblock/mongoid-cached-json)
+Mongoid::CachedJson
 ===================
+
+[![Gem Version](http://img.shields.io/gem/v/mongoid-cached-json.svg)](http://badge.fury.io/rb/mongoid-cached-json)
+[![Build Status](http://img.shields.io/travis/dblock/mongoid-cached-json.svg)](https://travis-ci.org/dblock/mongoid-cached-json)
+[![Dependency Status](https://gemnasium.com/dblock/mongoid-cached-json.svg)](https://gemnasium.com/dblock/mongoid-cached-json)
+[![Code Climate](https://codeclimate.com/github/dblock/mongoid-cached-json.svg)](https://codeclimate.com/github/dblock/mongoid-cached-json)
 
 Typical `as_json` definitions may involve lots of database point queries and method calls. When returning collections of objects, a single call may yield hundreds of database queries that can take seconds. This library mitigates the problem by implementing a module called `CachedJson`.
 
