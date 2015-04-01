@@ -331,7 +331,7 @@ describe Mongoid::CachedJson do
             expect(JsonTransform.new(upcase: 'upcase', downcase: 'DOWNCASE', nochange: 'eLiTe').as_json).to eq(upcase: 'UPCASE', downcase: 'downcase', nochange: 'eLiTe')
           end
         end
-        context 'with mutliple transformations' do
+        context 'with multiple transformations' do
           before :each do
             Mongoid::CachedJson.config.transform do |_field, _definition, value|
               value.to_i + 1
@@ -418,7 +418,7 @@ describe Mongoid::CachedJson do
           expect(@json_parent_foobar.as_json(properties: :all)[:json_polymorphic_referenced_foobar][:foo]).to eq('REFERENCED')
         end
       end
-      context 'polymorhphic relationships' do
+      context 'polymorphic relationships' do
         before :each do
           @company = PolyCompany.create!
           @company_post = PolyPost.create!(postable: @company)
