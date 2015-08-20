@@ -1,8 +1,8 @@
 Mongoid::CachedJson
 ===================
 
-[![Gem Version](http://img.shields.io/gem/v/mongoid-cached-json.svg)](http://badge.fury.io/rb/mongoid-cached-json)
-[![Build Status](http://img.shields.io/travis/dblock/mongoid-cached-json.svg)](https://travis-ci.org/dblock/mongoid-cached-json)
+[![Gem Version](https://badge.fury.io/rb/mongoid-cached-json.svg)](http://badge.fury.io/rb/mongoid-cached-json)
+[![Build Status](https://travis-ci.org/dblock/mongoid-cached-json.svg?branch=master)](https://travis-ci.org/dblock/mongoid-cached-json)
 [![Dependency Status](https://gemnasium.com/dblock/mongoid-cached-json.svg)](https://gemnasium.com/dblock/mongoid-cached-json)
 [![Code Climate](https://codeclimate.com/github/dblock/mongoid-cached-json.svg)](https://codeclimate.com/github/dblock/mongoid-cached-json)
 
