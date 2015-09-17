@@ -76,10 +76,12 @@ module Mongoid
         is_top_level_json = options[:is_top_level_json] || false
         if object_def[:object]
           object_reference = object_def[:object]
-          clazz, id = object_def[:object].class, object_def[:object].id
+          clazz = object_def[:object].class
+          id = object_def[:object].id
         else
           object_reference = nil
-          clazz, id = object_def[:clazz], object_def[:id]
+          clazz = object_def[:clazz]
+          id = object_def[:id]
         end
         key = cached_json_key(options, clazz, id)
         json = { _ref: { _clazz: self, _key: key, _materialize_cached_json: [clazz, id, object_reference, options] } }
@@ -128,7 +130,7 @@ module Mongoid
             object_ids = object.send(key)
             if object_ids
               reference_json = object_ids.map do |id|
-                materialize_keys, json = materialize_json(options,  clazz: clazz, id: id)
+                materialize_keys, json = materialize_json(options, clazz: clazz, id: id)
                 keys = keys ? keys.merge_set(materialize_keys) : materialize_keys
                 json
               end.compact
@@ -179,7 +181,7 @@ module Mongoid
               Mongoid::CachedJson.config.cache.write(key, fetched_json) unless Mongoid::CachedJson.config.disable_caching
             else
               # fetch/write from cache
-              fetched_json = (local_cache[key] = Mongoid::CachedJson.config.cache.fetch(key,  force: !!Mongoid::CachedJson.config.disable_caching) do
+              fetched_json = (local_cache[key] = Mongoid::CachedJson.config.cache.fetch(key, force: !!Mongoid::CachedJson.config.disable_caching) do
                 _ref[:_clazz].materialize_cached_json(* _ref[:_materialize_cached_json])
               end)
             end
@@ -203,7 +205,7 @@ module Mongoid
       # partial, unmaterialized JSON
       keys, partial_json = self.class.materialize_json({
         properties: :short, is_top_level_json: true, version: Mongoid::CachedJson.config.default_version
-      }.merge(options),  object: self)
+      }.merge(options), object: self)
       [keys, partial_json]
     end
 

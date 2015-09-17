@@ -12,6 +12,11 @@ Typical `as_json` definitions may involve lots of database point queries and met
 
 Using `Mongoid::CachedJson` we were able to cut our JSON API average response time by about a factor of 10.
 
+Compatibility
+-------------
+
+This gem is compatible with Mongoid 3, 4 and 5.
+
 Resources
 ---------
 

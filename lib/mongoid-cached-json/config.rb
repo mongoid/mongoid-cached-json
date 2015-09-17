@@ -42,7 +42,7 @@ module Mongoid
       end
 
       # Disable caching.
-      option :disable_caching,  default: false
+      option :disable_caching, default: false
 
       # Returns the default JSON version
       #

@@ -1,7 +1,7 @@
-Next
-----
+1.5.3 (2015/09/17)
+------------------
 
-* Your contribution here.
+* Compatibility with Mongoid 5 - [@dblock](http://github.com/dblock).
 
 1.5.2 (29/12/2014)
 ------------------

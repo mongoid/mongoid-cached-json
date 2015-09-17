@@ -68,7 +68,7 @@ describe Mongoid::Criteria do
       )
       # read_multi returned only 2 of 3 things, don't call fetch, just store the third value
       expect(Mongoid::CachedJson.config.cache).not_to receive(:fetch)
-      expect(Mongoid::CachedJson.config.cache).to receive(:write).with("as_json/unspecified/Tool/#{tool2.id}/all/true",  name: 'screwdriver')
+      expect(Mongoid::CachedJson.config.cache).to receive(:write).with("as_json/unspecified/Tool/#{tool2.id}/all/true", name: 'screwdriver')
       expect(tool_box.tools.as_json(properties: :all)).to eq([
         { tool_box: { x: :y }, x: :y },
         { tool_box: { x: :y }, name: 'screwdriver' }

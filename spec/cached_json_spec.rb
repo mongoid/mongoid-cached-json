@@ -354,7 +354,7 @@ describe Mongoid::CachedJson do
           key = "as_json/unspecified/JsonFoobar/#{example.id}/short/true"
           case cache_store
           when :memory_store then
-            expect(Mongoid::CachedJson.config.cache).to receive(:fetch).with(key,  force: true).twice
+            expect(Mongoid::CachedJson.config.cache).to receive(:fetch).with(key, force: true).twice
           when :dalli_store then
             expect(Mongoid::CachedJson.config.cache).not_to receive(:write)
           else
@@ -448,7 +448,7 @@ describe Mongoid::CachedJson do
                                                           { nickname: 'Joe', person: { name: 'Joe' } },
                                                           { nickname: 'Bob', person: { name: 'Bob' } }
                                                         ]
-          )
+                                                       )
         end
       end
       context 'with repeated objects in the JSON' do
@@ -464,7 +464,7 @@ describe Mongoid::CachedJson do
                                                           { nickname: 'Joe', person: { name: 'Evil' } },
                                                           { nickname: 'Bob', person: { name: 'Evil' } }
                                                         ]
-          )
+                                                       )
         end
       end
       context 'belongs_to relationship' do
