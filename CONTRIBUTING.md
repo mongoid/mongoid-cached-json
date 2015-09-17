@@ -23,6 +23,15 @@ git pull upstream master
 git checkout -b my-feature-branch
 ```
 
+#### Install Memcached and MongoDB
+
+MongoDB and Memcached are required, use your favorite OS installer.
+
+```
+brew install mongodb
+brew install memcached
+```
+
 #### Bundle Install and Test
 
 Ensure that you can build the project and run tests.
