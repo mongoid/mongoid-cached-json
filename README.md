@@ -2,9 +2,9 @@ Mongoid::CachedJson
 ===================
 
 [![Gem Version](https://badge.fury.io/rb/mongoid-cached-json.svg)](http://badge.fury.io/rb/mongoid-cached-json)
-[![Build Status](https://travis-ci.org/dblock/mongoid-cached-json.svg?branch=master)](https://travis-ci.org/dblock/mongoid-cached-json)
-[![Dependency Status](https://gemnasium.com/dblock/mongoid-cached-json.svg)](https://gemnasium.com/dblock/mongoid-cached-json)
-[![Code Climate](https://codeclimate.com/github/dblock/mongoid-cached-json.svg)](https://codeclimate.com/github/dblock/mongoid-cached-json)
+[![Build Status](https://travis-ci.org/mongoid/mongoid-cached-json.svg?branch=master)](https://travis-ci.org/mongoid/mongoid-cached-json)
+[![Dependency Status](https://gemnasium.com/mongoid/mongoid-cached-json.svg)](https://gemnasium.com/mongoid/mongoid-cached-json)
+[![Code Climate](https://codeclimate.com/github/mongoid/mongoid-cached-json.svg)](https://codeclimate.com/github/mongoid/mongoid-cached-json)
 
 Typical `as_json` definitions may involve lots of database point queries and method calls. When returning collections of objects, a single call may yield hundreds of database queries that can take seconds. This library mitigates the problem by implementing a module called `CachedJson`.
 
@@ -21,7 +21,7 @@ Resources
 ---------
 
 * [Need Help? Google Group](http://groups.google.com/group/mongoid-cached-json)
-* [Source Code](http://github.com/dblock/mongoid-cached-json)
+* [Source Code](http://github.com/mongoid/mongoid-cached-json)
 
 Quickstart
 ----------
@@ -293,6 +293,6 @@ See [CONTRIBUTING](CONTRIBUTING.md).
 Copyright and License
 ---------------------
 
-MIT License, see [LICENSE](https://github.com/dblock/mongoid-cached-json/blob/master/LICENSE.md) for details.
+MIT License, see [LICENSE](https://github.com/mongoid/mongoid-cached-json/blob/master/LICENSE.md) for details.
 
 (c) 2012-2014 [Artsy](https://artsy.net) and [Contributors](CHANGELOG.md)
