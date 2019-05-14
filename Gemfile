@@ -18,11 +18,11 @@ else
 end
 
 group :development do
-  gem 'rake'
   gem 'bundler', '~> 1.0'
-  gem 'yard', '~> 0.6'
   gem 'dalli', '~> 2.6'
-  gem 'rubocop', '0.33.0'
+  gem 'rake'
+  gem 'rubocop'
+  gem 'yard', '~> 0.6'
 end
 
 group :test do

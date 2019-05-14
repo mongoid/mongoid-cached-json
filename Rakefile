@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'bundler'
 
-require File.expand_path('../lib/mongoid-cached-json/version', __FILE__)
+require File.expand_path('lib/mongoid-cached-json/version', __dir__)
 
 Bundler.setup(:default, :development)
 Bundler::GemHelper.install_tasks
@@ -31,4 +31,4 @@ end
 require 'rubocop/rake_task'
 RuboCop::RakeTask.new
 
-task default: [:rubocop, :spec]
+task default: %i[rubocop spec]
