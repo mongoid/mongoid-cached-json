@@ -3,7 +3,11 @@ class FastJsonImage
   include Mongoid::CachedJson
 
   field :name, default: 'Image'
-  belongs_to :fast_json_artwork
+  if Mongoid::Compatibility::Version.mongoid5_or_older?
+    belongs_to :fast_json_artwork
+  else
+    belongs_to :fast_json_artwork, required: false
+  end
   has_and_belongs_to_many :fast_json_urls
 
   json_fields \

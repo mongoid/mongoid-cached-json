@@ -5,7 +5,12 @@ class JsonManager
   field :name
   field :ssn, default: '123-45-6789'
   has_many :json_employees
-  belongs_to :supervisor, class_name: 'JsonSupervisor'
+
+  if Mongoid::Compatibility::Version.mongoid5_or_older?
+    belongs_to :supervisor, class_name: 'JsonSupervisor'
+  else
+    belongs_to :supervisor, class_name: 'JsonSupervisor', required: false
+  end
 
   json_fields \
     name: {},

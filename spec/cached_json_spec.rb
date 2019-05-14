@@ -88,10 +88,10 @@ describe Mongoid::CachedJson do
       end
       context 'many-to-one relationships' do
         it 'uses the correct properties on the base object and passes :short or :all as appropriate' do
-          manager = JsonManager.create(name: 'Boss')
-          peon = manager.json_employees.create(name: 'Peon')
-          manager.json_employees.create(name: 'Indentured servant')
-          manager.json_employees.create(name: 'Serf', nickname: 'Vince')
+          manager = JsonManager.create!(name: 'Boss')
+          peon = manager.json_employees.create!(name: 'Peon')
+          manager.json_employees.create!(name: 'Indentured servant')
+          manager.json_employees.create!(name: 'Serf', nickname: 'Vince')
           3.times do
             3.times do
               manager_short_json = manager.as_json(properties: :short)
@@ -129,8 +129,8 @@ describe Mongoid::CachedJson do
           end
         end
         it 'correctly updates fields when either the parent or child class changes' do
-          manager = JsonManager.create(name: 'JsonManager')
-          employee = manager.json_employees.create(name: 'JsonEmployee')
+          manager = JsonManager.create!(name: 'JsonManager')
+          employee = manager.json_employees.create!(name: 'JsonEmployee')
           3.times do
             expect(manager.as_json(properties: :short)).to eq(name: 'JsonManager', employees: [{ name: 'JsonEmployee' }])
             expect(employee.as_json(properties: :short)).to eq(name: 'JsonEmployee')

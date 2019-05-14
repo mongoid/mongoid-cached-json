@@ -3,7 +3,12 @@ class Tool
   include Mongoid::CachedJson
 
   field :name
-  belongs_to :tool_box
+
+  if Mongoid::Compatibility::Version.mongoid5_or_older?
+    belongs_to :tool_box
+  else
+    belongs_to :tool_box, required: false
+  end
 
   json_fields \
     name: {},
