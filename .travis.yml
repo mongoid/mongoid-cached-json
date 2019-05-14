@@ -1,5 +1,7 @@
 sudo: false
 
+script: bundle exec rake
+
 services:
   - mongodb
   - memcache
@@ -23,6 +25,10 @@ env:
 cache: bundler
 
 matrix:
+  include:
+    - rvm: 2.6.3
+      env: RUBOCOP=true
+      script: bundle exec rake rubocop
   exclude:
     - rvm: 2.0.0
       env: MONGOID_VERSION=6
