@@ -18,7 +18,6 @@ else
 end
 
 group :development do
-  gem 'bundler', '~> 1.0'
   gem 'dalli', '~> 2.6'
   gem 'rake'
   gem 'rubocop'
