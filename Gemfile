@@ -3,6 +3,10 @@ source 'http://rubygems.org'
 gemspec
 
 case version = ENV['MONGOID_VERSION'] || '~> 5.0'
+when /7/
+  gem 'mongoid', '~> 7.0'
+when /6/
+  gem 'mongoid', '~> 6.0'
 when /5/
   gem 'mongoid', '~> 5.0'
 when /4/
@@ -14,11 +18,10 @@ else
 end
 
 group :development do
-  gem 'rake'
-  gem 'bundler', '~> 1.0'
-  gem 'yard', '~> 0.6'
   gem 'dalli', '~> 2.6'
-  gem 'rubocop', '0.33.0'
+  gem 'rake'
+  gem 'rubocop'
+  gem 'yard', '~> 0.6'
 end
 
 group :test do

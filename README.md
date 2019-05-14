@@ -15,7 +15,7 @@ Using `Mongoid::CachedJson` we were able to cut our JSON API average response ti
 Compatibility
 -------------
 
-This gem is compatible with Mongoid 3, 4 and 5.
+This gem is compatible with Mongoid 3, 4, 5 and 6.
 
 Resources
 ---------

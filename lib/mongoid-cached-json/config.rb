@@ -3,7 +3,6 @@ module Mongoid
   module CachedJson
     module Config
       extend self
-      include ActiveSupport::Callbacks
 
       # Current configuration settings.
       attr_accessor :settings
