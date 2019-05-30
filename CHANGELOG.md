@@ -5,6 +5,7 @@
 * [#20](https://github.com/mongoid/mongoid-cached-json/pull/20): Compatibility with Ruby 2.3, 2.4, 2.5 and 2.6 - [@yuki24](http://github.com/yuki24).
 * [#20](https://github.com/mongoid/mongoid-cached-json/pull/20): Compatibility with Mongoid 6 - [@yuki24](http://github.com/yuki24).
 * [#20](https://github.com/mongoid/mongoid-cached-json/pull/20): No longer test against Ruby 1.9.3 - [@yuki24](http://github.com/yuki24).
+* [#22](https://github.com/mongoid/mongoid-cached-json/pull/22): Compatibility with Mongoid 7 - [@yuki24](https://github.com/yuki24)
 
 1.5.3 (2015/09/17)
 ------------------

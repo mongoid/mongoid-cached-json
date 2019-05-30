@@ -126,7 +126,13 @@ module Mongoid
           else
             clazz = reference_def[:metadata].class_name.constantize
           end
-          if reference_def[:metadata].relation == Mongoid::Relations::Referenced::ManyToMany
+          relation_class = if Mongoid::Compatibility::Version.mongoid7_or_newer?
+                             Mongoid::Association::Referenced::HasAndBelongsToMany::Proxy
+                           else
+                             Mongoid::Relations::Referenced::ManyToMany
+                           end
+
+          if reference_def[:metadata].relation == relation_class
             object_ids = object.send(key)
             if object_ids
               reference_json = object_ids.map do |id|
