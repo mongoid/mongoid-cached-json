@@ -1,7 +1,11 @@
-1.6.0 (Next)
+1.6.1 (Next)
 ------------
 
 * Your contribution here.
+
+1.6.0 (2019/05/31)
+------------
+
 * [#20](https://github.com/mongoid/mongoid-cached-json/pull/20): Compatibility with Ruby 2.3, 2.4, 2.5 and 2.6 - [@yuki24](http://github.com/yuki24).
 * [#20](https://github.com/mongoid/mongoid-cached-json/pull/20): Compatibility with Mongoid 6 - [@yuki24](http://github.com/yuki24).
 * [#20](https://github.com/mongoid/mongoid-cached-json/pull/20): No longer test against Ruby 1.9.3 - [@yuki24](http://github.com/yuki24).
