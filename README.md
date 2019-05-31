@@ -3,7 +3,6 @@ Mongoid::CachedJson
 
 [![Gem Version](https://badge.fury.io/rb/mongoid-cached-json.svg)](http://badge.fury.io/rb/mongoid-cached-json)
 [![Build Status](https://travis-ci.org/mongoid/mongoid-cached-json.svg?branch=master)](https://travis-ci.org/mongoid/mongoid-cached-json)
-[![Dependency Status](https://gemnasium.com/mongoid/mongoid-cached-json.svg)](https://gemnasium.com/mongoid/mongoid-cached-json)
 [![Code Climate](https://codeclimate.com/github/mongoid/mongoid-cached-json.svg)](https://codeclimate.com/github/mongoid/mongoid-cached-json)
 
 Typical `as_json` definitions may involve lots of database point queries and method calls. When returning collections of objects, a single call may yield hundreds of database queries that can take seconds. This library mitigates the problem by implementing a module called `CachedJson`.
@@ -15,7 +14,7 @@ Using `Mongoid::CachedJson` we were able to cut our JSON API average response ti
 Compatibility
 -------------
 
-This gem is compatible with Mongoid 3, 4, 5 and 6.
+This gem is compatible with Mongoid 3, 4, 5, 6, and 7.
 
 Resources
 ---------
