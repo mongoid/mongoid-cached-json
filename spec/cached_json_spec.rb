@@ -496,6 +496,14 @@ describe Mongoid::CachedJson do
           expect(@image.as_json(properties: :all)).to eq(name: 'Image', urls: [])
         end
       end
+      context 'evaluating a false-y value in a reference type' do
+        it 'correctly returns false instead of nil' do
+          manager = JsonManager.create!(name: 'Boss')
+          manager.json_employees.create!(name: 'Matt')
+          manager_short_json = manager.as_json(properties: :short)
+          expect(manager_short_json[:has_left_handed_employee]).to eq(false)
+        end
+      end
     end
   end
 end
