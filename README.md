@@ -119,7 +119,7 @@ When calling `as_json` on a model that contains references to other models the v
 
 * Use the value of the `:reference_properties` option, if specified.
 * For `:short` JSON, use `:short`.
-* For `:public` JSON, use `:short`.
+* For `:public` JSON, use `:public`.
 * For `:all` JSON, use `:all`.
 
 The dynamic selection where `:public` generates `:short` references allows to return smaller embedded collections, while `:all` allows to fetch deep data. Another way of looking at this is to say that a field in a `:short` JSON appears in collections, a field declared in the `:public` JSON appears for all users and the field declared in the `:all` JSON appears for object owners only.
