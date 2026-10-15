@@ -13,13 +13,6 @@ Typical `as_json` definitions may involve lots of database point queries and met
 
 Using `Mongoid::CachedJson` we were able to cut our JSON API average response time by about a factor of 10.
 
-Compatibility
--------------
-
-CI tests representative compatible combinations of Mongoid 3 through 9, Ruby 2.1 through 4.0, and MongoDB Server 3.6 through 8.0, including Ruby 4.0 / Mongoid 9 / MongoDB 8.0. See [the test matrix](.github/workflows/test.yml); this is not a Cartesian product of supported versions.
-
-Modern ActiveSupport uses `ActiveSupport::Cache::MemCacheStore` with Dalli 3 instead of the legacy Dalli 2 `DalliStore`. Tests exercise both the memory and memcached backends. Set `MONGOID_VERSION` to select a Mongoid major version and `MONGODB_HOST` to override the default `localhost:27017` when running tests.
-
 Resources
 ---------
 
