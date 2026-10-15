@@ -2,8 +2,10 @@ Mongoid::CachedJson
 ===================
 
 [![Gem Version](https://badge.fury.io/rb/mongoid-cached-json.svg)](http://badge.fury.io/rb/mongoid-cached-json)
-[![Build Status](https://travis-ci.org/mongoid/mongoid-cached-json.svg?branch=master)](https://travis-ci.org/mongoid/mongoid-cached-json)
-[![Code Climate](https://codeclimate.com/github/mongoid/mongoid-cached-json.svg)](https://codeclimate.com/github/mongoid/mongoid-cached-json)
+[![Test](https://github.com/mongoid/mongoid-cached-json/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/mongoid/mongoid-cached-json/actions/workflows/test.yml?query=branch%3Amaster)
+[![Coverage Status](https://coveralls.io/repos/github/mongoid/mongoid-cached-json/badge.svg?branch=master)](https://coveralls.io/github/mongoid/mongoid-cached-json?branch=master)
+
+The Ruby 4.0 CI job measures library line coverage with SimpleCov and submits `coverage/.resultset.json` to Coveralls using GitHub's automatic token. Other matrix jobs do not submit duplicate reports. Run `COVERAGE=true bundle install` followed by `COVERAGE=true bundle exec rake spec` for a local report. The default-branch badge requires Coveralls to accept an upstream `master` build; configuring this workflow does not activate the external service.
 
 Typical `as_json` definitions may involve lots of database point queries and method calls. When returning collections of objects, a single call may yield hundreds of database queries that can take seconds. This library mitigates the problem by implementing a module called `CachedJson`.
 
@@ -14,7 +16,9 @@ Using `Mongoid::CachedJson` we were able to cut our JSON API average response ti
 Compatibility
 -------------
 
-This gem is compatible with Mongoid 3, 4, 5, 6, and 7.
+CI tests representative compatible combinations of Mongoid 3 through 9, Ruby 2.1 through 4.0, and MongoDB Server 3.6 through 8.0, including Ruby 4.0 / Mongoid 9 / MongoDB 8.0. See [the test matrix](.github/workflows/test.yml); this is not a Cartesian product of supported versions.
+
+Modern ActiveSupport uses `ActiveSupport::Cache::MemCacheStore` with Dalli 3 instead of the legacy Dalli 2 `DalliStore`. Tests exercise both the memory and memcached backends. Set `MONGOID_VERSION` to select a Mongoid major version and `MONGODB_HOST` to override the default `localhost:27017` when running tests.
 
 Resources
 ---------

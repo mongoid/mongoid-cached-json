@@ -1,18 +1,17 @@
 require 'spec_helper'
-require 'active_support/cache/dalli_store'
 
-describe ActiveSupport::Cache::DalliStore do
+describe MEMCACHE_STORE_CLASS do
   before :each do
     @cache = Mongoid::CachedJson::Config.cache
     Mongoid::CachedJson.configure do |config|
-      config.cache = ActiveSupport::Cache.lookup_store(:dalli_store)
+      config.cache = ActiveSupport::Cache.lookup_store(MEMCACHE_STORE)
     end
   end
   after :each do
     Mongoid::CachedJson::Config.cache = @cache
   end
   it 'uses dalli_store' do
-    expect(Mongoid::CachedJson.config.cache).to be_a ActiveSupport::Cache::DalliStore
+    expect(Mongoid::CachedJson.config.cache).to be_a MEMCACHE_STORE_CLASS
   end
   context 'read_multi' do
     context 'array' do

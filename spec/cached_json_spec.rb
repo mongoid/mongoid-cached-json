@@ -6,7 +6,7 @@ describe Mongoid::CachedJson do
     expect(Mongoid::CachedJson::VERSION.to_f).to be > 0
   end
 
-  [:dalli_store, :memory_store].each do |cache_store|
+  [MEMCACHE_STORE, :memory_store].each do |cache_store|
     context "#{cache_store}" do
       before :each do
         @cache = Mongoid::CachedJson::Config.cache
@@ -355,7 +355,7 @@ describe Mongoid::CachedJson do
           case cache_store
           when :memory_store then
             expect(Mongoid::CachedJson.config.cache).to receive(:fetch).with(key, force: true).twice
-          when :dalli_store then
+          when :dalli_store, :mem_cache_store then
             expect(Mongoid::CachedJson.config.cache).not_to receive(:write)
           else
             fail ArgumentError, "invalid cache store: #{cache_store}"
