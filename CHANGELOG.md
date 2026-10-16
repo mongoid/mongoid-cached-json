@@ -1,6 +1,7 @@
 ### 1.7.0 (Next)
 
 * Your contribution here.
+* [#31](https://github.com/mongoid/mongoid-cached-json/pull/31): Add explicit per-model schema cache versions, independent of API versions - [@dblock](https://github.com/dblock).
 * [#39](https://github.com/mongoid/mongoid-cached-json/pull/39): Check pull request changelogs with Danger and report results in PR comments - [@dblock](https://github.com/dblock).
 * [#34](https://github.com/mongoid/mongoid-cached-json/pull/34): Support `cache: false` on individual JSON fields - [@dblock](https://github.com/dblock).
 * [#36](https://github.com/mongoid/mongoid-cached-json/pull/36): Document cache invalidation boundaries for callback-bypassing and concurrent writes - [@dblock](https://github.com/dblock).

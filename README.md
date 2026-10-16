@@ -226,6 +226,13 @@ person.as_json(version: :v2) # { first: 'John', middle: 'F.', last: 'Kennedy', n
 person.as_json(version: :v3) # { first: 'John', middle: 'F.', last: 'Kennedy', name: 'John F. Kennedy', born: 'May 29, 1917' }
 ```
 
+Schema Cache Versions
+---------------------
+
+Declare `json_fields cache_version: 2, name: {}` to add a model-specific schema namespace to its cache keys. Increment it when changing fields, computed values, or transformations in a deployment. This is independent of the API `version:` passed to `as_json`; callers need not change. Omitting `cache_version` preserves existing keys.
+
+New code stops reading old fragments, including referenced fragments of that model. Old entries are not deleted and remain until eviction or a cache-store TTL. The gem does not set a default TTL; configure `expires_in` on your cache store if needed. Updates expire only the current namespace. For rolling deployments or rollbacks, do not reuse a namespace containing stale values: coordinate invalidation or choose another version.
+
 Transformations
 ---------------
 
