@@ -56,7 +56,7 @@ jobs:
     runs-on: ubuntu-22.04
     env:
       MONGOID_VERSION: '7'
-      RUBOCOP_VERSION: '0.71.0'
+      RUBOCOP_VERSION: '1.92.0'
     steps:
       - uses: actions/checkout@v6
       - uses: ruby/setup-ruby@v1

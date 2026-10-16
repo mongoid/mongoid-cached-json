@@ -353,9 +353,9 @@ describe Mongoid::CachedJson do
           example = JsonFoobar.create(foo: 'FOO', baz: 'BAZ', bar: 'BAR')
           key = "as_json/unspecified/JsonFoobar/#{example.id}/short/true"
           case cache_store
-          when :memory_store then
+          when :memory_store
             expect(Mongoid::CachedJson.config.cache).to receive(:fetch).with(key, force: true).twice
-          when :dalli_store, :mem_cache_store then
+          when :dalli_store, :mem_cache_store
             expect(Mongoid::CachedJson.config.cache).not_to receive(:write)
           else
             fail ArgumentError, "invalid cache store: #{cache_store}"
