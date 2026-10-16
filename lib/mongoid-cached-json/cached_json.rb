@@ -9,6 +9,7 @@ module Mongoid
       class_attribute :all_json_properties
       class_attribute :all_json_versions
       class_attribute :cached_json_field_defs
+      class_attribute :cached_json_uncached_field_defs
       class_attribute :cached_json_reference_defs
       class_attribute :hide_as_child_json_when
     end
@@ -24,6 +25,7 @@ module Mongoid
         self.all_json_properties = [:short, :public, :all]
         cached_json_defs = Hash[defs.map { |k, v| [k, { type: :callable, properties: :short, definition: k }.merge(v)] }]
         self.cached_json_field_defs = {}
+        self.cached_json_uncached_field_defs = {}
         self.cached_json_reference_defs = {}
         # Collect all versions for clearing cache
         self.all_json_versions = cached_json_defs.map do |_field, definition|
@@ -31,7 +33,10 @@ module Mongoid
         end.flatten.compact.uniq
         all_json_properties.each_with_index do |property, i|
           cached_json_field_defs[property] = Hash[cached_json_defs.find_all do |_field, definition|
-            all_json_properties.find_index(definition[:properties]) <= i && definition[:type] == :callable
+            all_json_properties.find_index(definition[:properties]) <= i && definition[:type] == :callable && definition[:cache] != false
+          end]
+          cached_json_uncached_field_defs[property] = Hash[cached_json_defs.find_all do |_field, definition|
+            all_json_properties.find_index(definition[:properties]) <= i && definition[:type] == :callable && definition[:cache] == false
           end]
           cached_json_reference_defs[property] = Hash[cached_json_defs.find_all do |_field, definition|
             all_json_properties.find_index(definition[:properties]) <= i && definition[:type] == :reference
@@ -69,6 +74,22 @@ module Mongoid
         end
       end
 
+      # Materialize JSON fields that opt out of shared caching.
+      def materialize_uncached_json(clazz, id, object_reference, options)
+        object_reference = clazz.where(_id: id).first unless object_reference
+        return {} unless object_reference
+
+        Hash[clazz.cached_json_uncached_field_defs[options[:properties]].map do |field, definition|
+          versions = ([definition[:version]] | Array(definition[:versions])).compact
+          next unless versions.empty? || versions.include?(options[:version])
+          json_value = (definition[:definition].is_a?(Symbol) ? object_reference.send(definition[:definition]) : definition[:definition].call(object_reference))
+          Mongoid::CachedJson.config.transform.each do |t|
+            json_value = t.call(field, definition, json_value)
+          end
+          [field, json_value]
+        end.compact]
+      end
+
       # Given an object definition in the form of either an object or a class, id pair,
       # grab the as_json representation from the cache if possible, otherwise create
       # the as_json representation by loading the object from the database. For any
@@ -101,6 +122,12 @@ module Mongoid
               if reference.is_a?(Hash) && ref = reference[:_ref]
                 ref[:_parent] = json
                 ref[:_field] = field
+              end
+              if definition[:cache] == false
+                references = reference.is_a?(Array) ? reference : [reference]
+                references.each do |item|
+                  item[:_ref][:_disable_caching] = true if item.is_a?(Hash) && item[:_ref]
+                end
               end
               keys.merge_set(reference_keys)
               [field, reference]
@@ -168,8 +195,10 @@ module Mongoid
 
     # Check whether the cache supports :read_multi and prefetch the data if it does.
     def self.materialize_json_references_with_read_multi(key_refs, partial_json)
-      unfrozen_keys = key_refs.keys.to_a.map(&:dup) if key_refs # see https://github.com/mperham/dalli/pull/320
-      read_multi = unfrozen_keys && Mongoid::CachedJson.config.cache.respond_to?(:read_multi)
+      if key_refs
+        unfrozen_keys = key_refs.select { |_key, refs| refs.any? { |ref| !ref[:_ref][:_disable_caching] } }.keys.map(&:dup)
+      end
+      read_multi = unfrozen_keys && !unfrozen_keys.empty? && Mongoid::CachedJson.config.cache.respond_to?(:read_multi)
       local_cache = read_multi ? Mongoid::CachedJson.config.cache.read_multi(*unfrozen_keys) : {}
       Mongoid::CachedJson.materialize_json_references(key_refs, local_cache, read_multi) if key_refs
       partial_json
@@ -182,7 +211,9 @@ module Mongoid
           _ref = ref.delete(:_ref)
           key = _ref[:_key]
           fetched_json = local_cache[key] if local_cache.key?(key)
-          unless fetched_json
+          if _ref[:_disable_caching]
+            fetched_json = _ref[:_clazz].materialize_cached_json(* _ref[:_materialize_cached_json])
+          elsif !fetched_json
             if read_multi
               # no value in cache, materialize and write
               fetched_json = (local_cache[key] = _ref[:_clazz].materialize_cached_json(* _ref[:_materialize_cached_json]))
@@ -198,6 +229,7 @@ module Mongoid
             _ref[:_parent].delete(_ref[:_field]) if _ref[:_parent]
           elsif fetched_json
             ref.merge! fetched_json
+            ref.merge! _ref[:_clazz].materialize_uncached_json(* _ref[:_materialize_cached_json])
           elsif _ref[:_parent]
             # a single _ref that resolved to a nil
             _ref[:_parent][_ref[:_field]] = nil
