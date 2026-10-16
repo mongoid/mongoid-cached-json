@@ -22,7 +22,10 @@ module Mongoid
       # @param [ hash ] defs JSON field definition.
       #
       # @since 1.0
-      def json_fields(defs)
+      def json_fields(defs, additions = {})
+        if defs == :all
+          defs = Hash[fields.keys.map { |field| [field.to_sym, {}] }].merge(additions)
+        end
         self.cached_json_cache_version = defs.delete(:cache_version)
         self.cached_json_disable_caching = defs.delete(:disable_caching)
         self.hide_as_child_json_when = defs.delete(:hide_as_child_json_when) || lambda { |_a| false }

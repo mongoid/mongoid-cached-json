@@ -161,6 +161,13 @@ order.as_json # => { number: '123', product: { name: 'Renamed widget', stock: 9 
 
 The `product` reference is recomputed even if the product has a cached JSON fragment from another serialization. This does not disable caching on the `Product` model itself: `product.as_json` and other relationships to that product still use their normal cache policies. References nested inside the product also retain their own cache policies; the bypass is not recursive.
 
+All Stored Fields
+-----------------
+
+Use `json_fields :all, display_name: { definition: :display_name }` to expand every Mongoid field declared so far (including `_id`) into an ordinary JSON field, then merge explicit definitions. An explicit definition overrides the generated definition for the same symbol key; for example, `json_fields :all, secret: { properties: :all }` restricts that field to the `:all` representation.
+
+Declare Mongoid fields before `json_fields :all`. Later declarations, dynamic attributes, and associations are not added automatically; declare references explicitly with `type: :reference`. This is opt-in and may expose sensitive stored data or foreign keys, so prefer an explicit allowlist for public APIs. Runtime `as_json(methods: ...)` selection remains unsupported: declare computed methods in `json_fields`.
+
 Reference Properties
 --------------------
 
