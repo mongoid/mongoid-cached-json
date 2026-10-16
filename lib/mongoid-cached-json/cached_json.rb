@@ -13,6 +13,7 @@ module Mongoid
       class_attribute :cached_json_reference_defs
       class_attribute :hide_as_child_json_when
       class_attribute :cached_json_cache_version
+      class_attribute :cached_json_disable_caching
     end
 
     module ClassMethods
@@ -23,6 +24,7 @@ module Mongoid
       # @since 1.0
       def json_fields(defs)
         self.cached_json_cache_version = defs.delete(:cache_version)
+        self.cached_json_disable_caching = defs.delete(:disable_caching)
         self.hide_as_child_json_when = defs.delete(:hide_as_child_json_when) || lambda { |_a| false }
         self.all_json_properties = [:short, :public, :all]
         cached_json_defs = Hash[defs.map { |k, v| [k, { type: :callable, properties: :short, definition: k }.merge(v)] }]
@@ -111,7 +113,8 @@ module Mongoid
           id = object_def[:id]
         end
         key = cached_json_key(options, clazz, id)
-        json = { _ref: { _clazz: self, _key: key, _materialize_cached_json: [clazz, id, object_reference, options] } }
+        json = { _ref: { _clazz: self, _key: key, _disable_caching: clazz.cached_json_disable_caching,
+                        _materialize_cached_json: [clazz, id, object_reference, options] } }
         keys = KeyReferences.new
         keys.set_and_add(key, json)
         reference_defs = clazz.cached_json_reference_defs[options[:properties]]
