@@ -220,6 +220,7 @@ describe Mongoid::CachedJson do
         end
         it 'should yield JSON without an instance of a child' do
           p = SecretParent.create(name: 'Parent')
+          expect(p.as_json(properties: :short)).to eq(name: 'Parent', child: nil)
           expect(p.as_json(properties: :all)[:child]).to be_nil
         end
         it 'should yield child JSON when as_json is called on the parent and hide_as_child_json_when returns false on an instance' do
@@ -230,8 +231,8 @@ describe Mongoid::CachedJson do
         it 'should not yield child JSON when as_json is called on the parent and hide_as_child_json_when returns true on an instance' do
           p = SecretParent.create(name: 'Parent')
           p.create_sometimes_secret(should_tell_secret: false)
-          expect(p.as_json(properties: :short)).to eq(name: 'Parent', child: nil)
-          expect(p.as_json(properties: :short)[:child]).to be_nil
+          expect(p.as_json(properties: :short)).to eq(name: 'Parent')
+          expect(p.as_json(properties: :short)).not_to have_key(:child)
         end
       end
       context 'relationships with a multi-level hierarchy' do
