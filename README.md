@@ -210,6 +210,26 @@ Turning Caching Off
 
 You can set `Mongoid::CachedJson.config.disable_caching = true`. It may be a good idea to set it to `ENV['DISABLE_JSON_CACHING']`, in case this turns out not to be The Solution To All Of Your Performance Problems (TM).
 
+Cache Invalidation Boundaries
+-----------------------------
+
+Normal model updates and destroys expire that document's JSON fragments through Mongoid callbacks. Bulk or raw collection updates that bypass model callbacks cannot invalidate the cache automatically. Explicitly expire each affected document after such a write:
+
+``` ruby
+User.where(id: user_id).update_all(status: 'active')
+User.find(user_id).expire_cached_json
+```
+
+Concurrent writes have a separate boundary: an older in-memory instance can repopulate a fragment after another instance has saved newer values and expired the cache. Reload stale instances before serializing them, and expire their fragments if a stale writer may already have repopulated the cache:
+
+``` ruby
+user.reload
+user.expire_cached_json
+user.as_json
+```
+
+Reloading and expiring are not an atomic cross-process operation. This gem does not provide a distributed revision or compare-and-set protocol for cache stores. Applications requiring strict consistency across concurrent writers should coordinate persistence and cache invalidation themselves or disable caching for the affected data.
+
 Testing JSON
 ------------
 
