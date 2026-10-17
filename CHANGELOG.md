@@ -2,6 +2,7 @@
 
 * Your contribution here.
 * [#33](https://github.com/mongoid/mongoid-cached-json/pull/33): Allow per-model cache bypass with `json_fields disable_caching: true` - [@dblock](https://github.com/dblock).
+* [#32](https://github.com/mongoid/mongoid-cached-json/pull/32): Support opt-in declaration-time expansion of all stored fields with explicit overrides and computed fields - [@dblock](https://github.com/dblock).
 * [#31](https://github.com/mongoid/mongoid-cached-json/pull/31): Add explicit per-model schema cache versions, independent of API versions - [@dblock](https://github.com/dblock).
 * [#39](https://github.com/mongoid/mongoid-cached-json/pull/39): Check pull request changelogs with Danger and report results in PR comments - [@dblock](https://github.com/dblock).
 * [#34](https://github.com/mongoid/mongoid-cached-json/pull/34): Support `cache: false` on individual JSON fields - [@dblock](https://github.com/dblock).
