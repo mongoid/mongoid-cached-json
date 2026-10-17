@@ -63,6 +63,8 @@ Document any external behavior in the [README](README.md).
 
 Add a line to [CHANGELOG](CHANGELOG.md) under *Next Release*. Make it look like every other line, including your name and link to your Github account.
 
+Danger checks pull requests with `danger-changelog` and reports missing changelog entries in a PR comment. Include the pull request number in your entry once it is available.
+
 #### Commit Changes
 
 Make sure git knows your name and email address:
