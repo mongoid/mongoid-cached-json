@@ -1,6 +1,8 @@
 # encoding: utf-8
 module Mongoid
   module CachedJson
+    HIDDEN_JSON = :__mongoid_cached_json_hidden__
+
     extend ActiveSupport::Concern
 
     included do
@@ -49,8 +51,10 @@ module Mongoid
       def materialize_cached_json(clazz, id, object_reference, options)
         is_top_level_json = options[:is_top_level_json] || false
         object_reference = clazz.where(_id: id).first unless object_reference
-        if !object_reference || (!is_top_level_json && options[:properties] != :all && clazz.hide_as_child_json_when.call(object_reference))
+        if !object_reference
           nil
+        elsif !is_top_level_json && options[:properties] != :all && clazz.hide_as_child_json_when.call(object_reference)
+          HIDDEN_JSON
         else
           Hash[clazz.cached_json_field_defs[options[:properties]].map do |field, definition|
             # version match
@@ -190,7 +194,9 @@ module Mongoid
               end)
             end
           end
-          if fetched_json
+          if fetched_json == HIDDEN_JSON
+            _ref[:_parent].delete(_ref[:_field]) if _ref[:_parent]
+          elsif fetched_json
             ref.merge! fetched_json
           elsif _ref[:_parent]
             # a single _ref that resolved to a nil

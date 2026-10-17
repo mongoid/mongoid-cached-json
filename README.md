@@ -18,6 +18,7 @@ Resources
 
 * [Need Help? Google Group](http://groups.google.com/group/mongoid-cached-json)
 * [Source Code](http://github.com/mongoid/mongoid-cached-json)
+* [Upgrading](UPGRADING.md)
 
 Quickstart
 ----------
@@ -98,7 +99,7 @@ Defining Fields
 
 `Mongoid::CachedJson` supports the following options:
 
-* `:hide_as_child_json_when` is an optional function that hides the child JSON from `as_json` parent objects, eg. `cached_json hide_as_child_json_when: lambda { |instance| ! instance.secret? }`
+* `:hide_as_child_json_when` is an optional function that omits the child key from `as_json` parent objects when it returns true, eg. `cached_json hide_as_child_json_when: lambda { |instance| ! instance.secret? }`. A missing relationship remains a `nil` value.
 
 `Mongoid::CachedJson` field definitions support the following options:
 
