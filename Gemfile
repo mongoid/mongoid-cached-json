@@ -8,6 +8,11 @@ gem 'logger' if RUBY_VERSION >= '3.4'
 gem 'mongoid', version =~ /\A\d+\z/ ? "~> #{version}.0" : version
 
 group :development do
+  if RUBY_VERSION >= '2.7'
+    gem 'danger'
+    gem 'danger-changelog', require: false
+    gem 'danger-pr-comment', require: false
+  end
   gem 'dalli', RUBY_VERSION >= '3.0' ? '~> 3.0' : '~> 2.6'
   gem 'rake'
   gem 'rdoc', RUBY_VERSION >= '3.0' ? '>= 6' : '~> 4.2'
