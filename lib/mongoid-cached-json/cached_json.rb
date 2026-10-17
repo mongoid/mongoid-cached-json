@@ -12,6 +12,7 @@ module Mongoid
       class_attribute :cached_json_uncached_field_defs
       class_attribute :cached_json_reference_defs
       class_attribute :hide_as_child_json_when
+      class_attribute :cached_json_cache_version
     end
 
     module ClassMethods
@@ -21,6 +22,7 @@ module Mongoid
       #
       # @since 1.0
       def json_fields(defs)
+        self.cached_json_cache_version = defs.delete(:cache_version)
         self.hide_as_child_json_when = defs.delete(:hide_as_child_json_when) || lambda { |_a| false }
         self.all_json_properties = [:short, :public, :all]
         cached_json_defs = Hash[defs.map { |k, v| [k, { type: :callable, properties: :short, definition: k }.merge(v)] }]
@@ -140,7 +142,8 @@ module Mongoid
       # Cache key.
       def cached_json_key(options, cached_class, cached_id)
         base_class_name = cached_class.collection_name.to_s.singularize.camelize
-        "as_json/#{options[:version]}/#{base_class_name}/#{cached_id}/#{options[:properties]}/#{!!options[:is_top_level_json]}"
+        key = "as_json/#{options[:version]}/#{base_class_name}/#{cached_id}/#{options[:properties]}/#{!!options[:is_top_level_json]}"
+        cached_class.cached_json_cache_version.nil? ? key : "#{key}/schema/#{cached_class.cached_json_cache_version}"
       end
 
       # If the reference is a symbol, we may be lucky and be able to figure out the as_json
