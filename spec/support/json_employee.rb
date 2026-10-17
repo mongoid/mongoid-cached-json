@@ -4,6 +4,7 @@ class JsonEmployee
 
   field :name
   field :nickname, default: 'My Favorite'
+  field :is_left_handed, type: Boolean, default: false
   belongs_to :json_manager
 
   json_fields \

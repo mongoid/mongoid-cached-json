@@ -12,8 +12,13 @@ class JsonManager
     belongs_to :supervisor, class_name: 'JsonSupervisor', required: false
   end
 
+  def has_left_handed_employee?
+    json_employees.any? { |e| e.is_left_handed? }
+  end
+
   json_fields \
     name: {},
     ssn: { properties: :all },
-    employees: { type: :reference, definition: :json_employees }
+    employees: { type: :reference, definition: :json_employees },
+    has_left_handed_employee: { type: :reference, definition: :has_left_handed_employee? }
 end

@@ -151,13 +151,11 @@ module Mongoid
           reference_def_definition = reference_def[:definition]
           reference = reference_def_definition.is_a?(Symbol) ? object.send(reference_def_definition) : reference_def_definition.call(object)
           reference_json = nil
-          if reference
-            if reference.respond_to?(:as_json_partial)
-              reference_keys, reference_json = reference.as_json_partial(options)
-              keys = keys ? keys.merge_set(reference_keys) : reference_keys
-            else
-              reference_json = reference.as_json(options)
-            end
+          if reference.respond_to?(:as_json_partial)
+            reference_keys, reference_json = reference.as_json_partial(options)
+            keys = keys ? keys.merge_set(reference_keys) : reference_keys
+          else
+            reference_json = reference.as_json(options)
           end
         end
         [keys, reference_json]
