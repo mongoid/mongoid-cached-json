@@ -2,6 +2,7 @@
 ------------
 
 * Your contribution here.
+* [#34](https://github.com/mongoid/mongoid-cached-json/pull/34): Support `cache: false` on individual JSON fields.
 * [#36](https://github.com/mongoid/mongoid-cached-json/pull/36): Document cache invalidation boundaries for callback-bypassing and concurrent writes.
 * [#35](https://github.com/mongoid/mongoid-cached-json/pull/35): Omit hidden child references while preserving `nil` for missing references. See [UPGRADING](UPGRADING.md) for migration notes.
 * [#38](https://github.com/mongoid/mongoid-cached-json/pull/38): Fix a `:reference` field returning `nil` instead of `false` when its definition evaluates to a false-y, non-nil value - [@mzikherman](https://github.com/mzikherman).

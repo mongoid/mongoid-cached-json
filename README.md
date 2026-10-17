@@ -108,7 +108,58 @@ Defining Fields
 * `:properties` can be one of `:short`, `:public`, `:all`, in this order
 * `:version` can be a single version for this field to appear in
 * `:versions` can be an array of versions for this field to appear in
+* `:cache` defaults to `true`; set it to `false` to recompute a field on every serialization (see below)
 * `:reference_properties` can be one of `:short`, `:public`, `:all`, default will select the reference properties format dynamically (see below)
+
+Per-Field Caching
+-----------------
+
+Use `cache: false` for a field whose value should be evaluated on every `as_json` call, even when the rest of the object's JSON comes from the cache. The field is excluded from the cached fragment and merged into the response after that fragment is fetched. Its `definition`, property/version filters, and configured transformations still apply.
+
+``` ruby
+class Product
+  include Mongoid::Document
+  include Mongoid::CachedJson
+
+  field :name
+  field :stock, type: Integer
+
+  json_fields \
+    name: {},
+    stock: { cache: false }
+end
+
+product = Product.create!(name: 'Widget', stock: 10)
+product.as_json # => { name: 'Widget', stock: 10 }
+
+# Unsaved changes illustrate which fields are recomputed on a cache hit.
+product.name = 'Renamed widget'
+product.stock = 9
+product.as_json # => { name: 'Widget', stock: 9 }
+```
+
+The cached `name` stays unchanged until its cache entry expires or is invalidated (for example, by saving the product); `stock` is read from the current model instance each time. This option does not reload the model from MongoDB: reload a stale instance yourself if another process has changed its stored values.
+
+For a `type: :reference` field, `cache: false` bypasses reads and writes of the referenced object's own JSON fragment through that relationship. The parent's other fields remain cached:
+
+``` ruby
+class Order
+  include Mongoid::Document
+  include Mongoid::CachedJson
+
+  field :number
+  belongs_to :product
+
+  json_fields \
+    number: {},
+    product: { type: :reference, cache: false }
+end
+
+order = Order.create!(number: '123', product: product)
+order.as_json # => { number: '123', product: { name: 'Renamed widget', stock: 9 } }
+```
+
+The `product` reference is recomputed even if the product has a cached JSON fragment from another serialization. This does not disable caching on the `Product` model itself: `product.as_json` and other relationships to that product still use their normal cache policies. References nested inside the product also retain their own cache policies; the bypass is not recursive.
 
 Reference Properties
 --------------------
