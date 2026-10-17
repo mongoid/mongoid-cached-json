@@ -2,6 +2,7 @@
 ------------
 
 * Your contribution here.
+* [#38](https://github.com/mongoid/mongoid-cached-json/pull/38): Fix a `:reference` field returning `nil` instead of `false` when its definition evaluates to a false-y, non-nil value - [@mzikherman](https://github.com/mzikherman).
 * [#30](https://github.com/mongoid/mongoid-cached-json/pull/30): Replace the obsolete quality badge with Coveralls, generate real SimpleCov coverage in one modern CI job, and scope badges to upstream master.
 * [#30](https://github.com/mongoid/mongoid-cached-json/pull/30): Modernize CI with GitHub Actions, testing representative Ruby/Mongoid/MongoDB combinations through Ruby 4.0, Mongoid 9, and MongoDB Server 8.0, with modern memcached cache integration.
 

@@ -95,7 +95,7 @@ describe Mongoid::CachedJson do
           3.times do
             3.times do
               manager_short_json = manager.as_json(properties: :short)
-              expect(manager_short_json.length).to eq(2)
+              expect(manager_short_json.length).to eq(3)
               expect(manager_short_json[:name]).to eq('Boss')
               expect(manager_short_json[:employees].member?(name: 'Peon')).to be_truthy
               expect(manager_short_json[:employees].member?(name: 'Indentured servant')).to be_truthy
@@ -104,7 +104,7 @@ describe Mongoid::CachedJson do
             end
             3.times do
               manager_public_json = manager.as_json(properties: :public)
-              expect(manager_public_json.length).to eq(2)
+              expect(manager_public_json.length).to eq(3)
               expect(manager_public_json[:name]).to eq('Boss')
               expect(manager_public_json[:employees].member?(name: 'Peon')).to be_truthy
               expect(manager_public_json[:employees].member?(name: 'Indentured servant')).to be_truthy
@@ -113,7 +113,7 @@ describe Mongoid::CachedJson do
             end
             3.times do
               manager_all_json = manager.as_json(properties: :all)
-              expect(manager_all_json.length).to eq(3)
+              expect(manager_all_json.length).to eq(4)
               expect(manager_all_json[:name]).to eq('Boss')
               expect(manager_all_json[:ssn]).to eq('123-45-6789')
               expect(manager_all_json[:employees].member?(name: 'Peon', nickname: 'My Favorite')).to be_truthy
@@ -132,15 +132,15 @@ describe Mongoid::CachedJson do
           manager = JsonManager.create!(name: 'JsonManager')
           employee = manager.json_employees.create!(name: 'JsonEmployee')
           3.times do
-            expect(manager.as_json(properties: :short)).to eq(name: 'JsonManager', employees: [{ name: 'JsonEmployee' }])
+            expect(manager.as_json(properties: :short)).to eq(name: 'JsonManager', employees: [{ name: 'JsonEmployee' }], has_left_handed_employee: false)
             expect(employee.as_json(properties: :short)).to eq(name: 'JsonEmployee')
           end
           manager.name = 'New JsonManager'
           manager.save
-          3.times { expect(manager.as_json(properties: :short)).to eq(name: 'New JsonManager', employees: [{ name: 'JsonEmployee' }]) }
+          3.times { expect(manager.as_json(properties: :short)).to eq(name: 'New JsonManager', employees: [{ name: 'JsonEmployee' }], has_left_handed_employee: false) }
           employee.name = 'New JsonEmployee'
           employee.save
-          3.times { expect(manager.as_json(properties: :short)).to eq(name: 'New JsonManager', employees: [{ name: 'New JsonEmployee' }]) }
+          3.times { expect(manager.as_json(properties: :short)).to eq(name: 'New JsonManager', employees: [{ name: 'New JsonEmployee' }], has_left_handed_employee: false) }
         end
         context 'reference_properties' do
           it 'limits the json fields of a child relationship' do
@@ -494,6 +494,14 @@ describe Mongoid::CachedJson do
         it 'resolves a nil relationship on destroy' do
           @image.destroy
           expect(@image.as_json(properties: :all)).to eq(name: 'Image', urls: [])
+        end
+      end
+      context 'evaluating a false-y value in a reference type' do
+        it 'correctly returns false instead of nil' do
+          manager = JsonManager.create!(name: 'Boss')
+          manager.json_employees.create!(name: 'Matt')
+          manager_short_json = manager.as_json(properties: :short)
+          expect(manager_short_json[:has_left_handed_employee]).to eq(false)
         end
       end
     end
