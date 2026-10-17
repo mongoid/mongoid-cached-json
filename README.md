@@ -269,6 +269,8 @@ Turning Caching Off
 
 You can set `Mongoid::CachedJson.config.disable_caching = true`. It may be a good idea to set it to `ENV['DISABLE_JSON_CACHING']`, in case this turns out not to be The Solution To All Of Your Performance Problems (TM).
 
+To bypass shared-cache reads and writes for one model while retaining its JSON fields, versions, and property hierarchy, declare `json_fields disable_caching: true, name: {}`. This applies when the model is serialized directly, in collections, or as a reference. Other models, including its parent and referenced children, keep their own caching policy. Changes to an uncached child are visible even when its parent's scalar fields are cached.
+
 Cache Invalidation Boundaries
 -----------------------------
 
