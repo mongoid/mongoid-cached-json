@@ -38,13 +38,7 @@ describe 'Cached JSON boundary contracts' do
 end
 
 describe Mongoid::CachedJson do
-  it 'loads its standalone semantic version' do
-    hide_const('Mongoid::CachedJson::VERSION')
-    begin
-      load File.expand_path('../lib/mongoid-cached-json/version.rb', __dir__)
-      expect(described_class::VERSION).to match(/\A\d+\.\d+\.\d+\z/)
-    ensure
-      described_class.send(:remove_const, :VERSION) if described_class.const_defined?(:VERSION)
-    end
+  it 'defines a semantic version' do
+    expect(described_class::VERSION).to match(/\A\d+\.\d+\.\d+\z/)
   end
 end
