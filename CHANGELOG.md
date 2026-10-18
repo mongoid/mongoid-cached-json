@@ -1,6 +1,6 @@
 ### 1.7.1 (Next)
 
-* [#40](https://github.com/mongoid/mongoid-cached-json/pull/40): Cover plain criteria, uncached transforms, standalone version loading, and combine coverage across actual legacy and modern association APIs - [@dblock](https://github.com/dblock).
+* [#40](https://github.com/mongoid/mongoid-cached-json/pull/40): Cover plain criteria and uncached transforms, and combine coverage across actual legacy and modern association APIs - [@dblock](https://github.com/dblock).
 * Your contribution here.
 
 ### 1.7.0 (2026/10/16)
