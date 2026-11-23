@@ -1,5 +1,4 @@
-$LOAD_PATH.push File.expand_path('lib', __dir__)
-require 'mongoid-cached-json/version'
+require_relative 'lib/mongoid-cached-json/version'
 
 Gem::Specification.new do |s|
   s.name = 'mongoid-cached-json'

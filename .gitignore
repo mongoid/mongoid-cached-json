@@ -20,3 +20,4 @@ pkg
 
 # redcar
 .redcar
+/vendor/bundle
