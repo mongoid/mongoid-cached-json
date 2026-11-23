@@ -4,6 +4,7 @@
 * [#46](https://github.com/mongoid/mongoid-cached-json/pull/46): Upgrade danger-pr-comment to 0.3.0 from the `danger` organization and skip empty Danger report comments - [@dblock](https://github.com/dblock).
 * Your contribution here.
 * [#42](https://github.com/mongoid/mongoid-cached-json/pull/42): Lint Markdown, YAML, and spelling with rubocop-md, rubocop-prose, rubocop-spellcheck, and rubocop-yaml in a separate Lint workflow, and clean up documentation - [@dblock](https://github.com/dblock).
+* [#43](https://github.com/mongoid/mongoid-cached-json/pull/43): Run CI pushes only on the default branch, cancel superseded pull request runs, skip duplicate lint in the test matrix, and bound job times - [@dblock](https://github.com/dblock).
 
 ### 1.7.0 (2026/10/16)
 
