@@ -6,6 +6,7 @@ APIs
 BAZ
 Baz
 Benchmarking
+Bundler
 CachedJson
 CHANGELOG
 Changelog
@@ -22,10 +23,13 @@ DSL
 eg
 eLiTe
 Gemfile
+gemspec
 HABTM
 habtm
+JRuby
 JSON
 json
+json's
 JsonEmployee
 JsonFoobar
 JsonManager
@@ -42,6 +46,7 @@ memcached
 MemoryStore
 Mongoid
 mongoid
+MongoidCachedJsonRelease
 mzikherman
 namespace
 Naz
@@ -54,6 +59,7 @@ PolyPerson
 prefetch
 PrisonInmate
 Quickstart
+Rakefile
 rb
 rdoc
 README
@@ -63,6 +69,7 @@ roundtrips
 RSpec
 RuboCop
 rubocop
+RubyGems
 schemas
 SimpleCov
 Taz
