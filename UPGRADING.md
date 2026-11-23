@@ -1,8 +1,8 @@
 # Upgrading
 
-## Upgrading to 1.7.0
+## Upgrading To 1.7.0
 
-### Hidden child references
+### Hidden Child References
 
 [#35](https://github.com/mongoid/mongoid-cached-json/pull/35) changes how a single child reference is serialized when the child's `hide_as_child_json_when` predicate returns `true`. Previously, an existing but hidden child and a missing child both appeared as `child: nil` (`"child": null` in JSON), so clients could not distinguish them. Now, an existing but hidden child's key is omitted; a missing child still appears as `child: nil`.
 
@@ -30,7 +30,7 @@ class SometimesSecret
   belongs_to :secret_parent
 
   json_fields \
-    hide_as_child_json_when: lambda { |child| !child.should_tell_secret },
+    hide_as_child_json_when: ->(child) { !child.should_tell_secret },
     secret: {}
 end
 
