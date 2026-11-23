@@ -28,7 +28,14 @@ Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
-require 'rubocop/rake_task'
-RuboCop::RakeTask.new
+lint = RUBY_ENGINE == 'ruby' && Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('3.3') &&
+       Gem.loaded_specs.key?('rubocop')
+if lint
+  require 'rubocop/rake_task'
+  RuboCop::RakeTask.new(:rubocop)
 
-task default: [:rubocop, :spec]
+  desc 'Lint Ruby, Markdown, YAML, and spelling'
+  task lint: :rubocop
+end
+
+task default: lint ? %i[rubocop spec] : %i[spec]

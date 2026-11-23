@@ -294,7 +294,7 @@ module Mongoid
       #     config.cache = Rails.cache
       #   end
       #
-      # @return [ Config ] The configuration obejct.
+      # @return [ Config ] The configuration object.
       def configure
         block_given? ? yield(Mongoid::CachedJson::Config) : Mongoid::CachedJson::Config
       end

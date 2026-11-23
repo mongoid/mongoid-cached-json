@@ -1,9 +1,6 @@
-Mongoid::CachedJson
-===================
+# Mongoid::CachedJson
 
-[![Gem Version](https://badge.fury.io/rb/mongoid-cached-json.svg)](http://badge.fury.io/rb/mongoid-cached-json)
-[![Test](https://github.com/mongoid/mongoid-cached-json/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/mongoid/mongoid-cached-json/actions/workflows/test.yml?query=branch%3Amaster)
-[![Coverage Status](https://coveralls.io/repos/github/mongoid/mongoid-cached-json/badge.svg?branch=master)](https://coveralls.io/github/mongoid/mongoid-cached-json?branch=master)
+[![Gem Version](https://badge.fury.io/rb/mongoid-cached-json.svg)](https://badge.fury.io/rb/mongoid-cached-json) [![Test](https://github.com/mongoid/mongoid-cached-json/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/mongoid/mongoid-cached-json/actions/workflows/test.yml?query=branch%3Amaster) [![Coverage Status](https://coveralls.io/repos/github/mongoid/mongoid-cached-json/badge.svg?branch=master)](https://coveralls.io/github/mongoid/mongoid-cached-json?branch=master)
 
 The Ruby 4.0 CI job measures library line coverage with SimpleCov and submits `coverage/.resultset.json` to Coveralls using GitHub's automatic token. Other matrix jobs do not submit duplicate reports. Run `COVERAGE=true bundle install` followed by `COVERAGE=true bundle exec rake spec` for a local report. The default-branch badge requires Coveralls to accept an upstream `master` build; configuring this workflow does not activate the external service.
 
@@ -13,15 +10,21 @@ Typical `as_json` definitions may involve lots of database point queries and met
 
 Using `Mongoid::CachedJson` we were able to cut our JSON API average response time by about a factor of 10.
 
-Resources
----------
+## Resources
 
-* [Need Help? Google Group](http://groups.google.com/group/mongoid-cached-json)
-* [Source Code](http://github.com/mongoid/mongoid-cached-json)
+* [Need Help? Google Group](https://groups.google.com/g/mongoid-cached-json)
+* [Source Code](https://github.com/mongoid/mongoid-cached-json)
 * [Upgrading](UPGRADING.md)
 
-Quickstart
-----------
+## Installation
+
+Add the gem to your Gemfile and run `bundle install`.
+
+```ruby
+gem 'mongoid-cached-json'
+```
+
+## Quickstart
 
 Add `mongoid-cached-json` to your Gemfile.
 
@@ -29,7 +32,7 @@ Add `mongoid-cached-json` to your Gemfile.
 
 Include `Mongoid::CachedJson` in your models.
 
-``` ruby
+```ruby
 class Gadget
   include Mongoid::CachedJson
 
@@ -41,7 +44,6 @@ class Gadget
   json_fields \
     name: {},
     extras: { properties: :public }
-
 end
 
 class Widget
@@ -53,13 +55,12 @@ class Widget
   json_fields \
     name: {},
     gadgets: { type: :reference, properties: :public }
-
 end
 ```
 
 Invoke `as_json`.
 
-``` ruby
+```ruby
 widget = Widget.first
 
 # the `:short` version of the JSON, `gadgets` not included
@@ -75,12 +76,11 @@ widget.as_json(properties: :public)
 widget.as_json(properties: :all)
 ```
 
-Configuration
--------------
+## Configuration
 
 By default `Mongoid::CachedJson` will use an instance of `ActiveSupport::Cache::MemoryStore` in a non-Rails and `Rails.cache` in a Rails environment. You can configure it to use any other cache store.
 
-``` ruby
+```ruby
 Mongoid::CachedJson.configure do |config|
   config.cache = ActiveSupport::Cache::FileStore.new
 end
@@ -88,14 +88,13 @@ end
 
 The default JSON version returned from `as_json` is `:unspecified`. If you wish to redefine this, set `Mongoid::CachedJson.config.default_version`.
 
-``` ruby
+```ruby
 Mongoid::CachedJson.configure do |config|
   config.default_version = :v2
 end
 ```
 
-Defining Fields
----------------
+## Defining Fields
 
 `Mongoid::CachedJson` supports the following options:
 
@@ -111,12 +110,11 @@ Defining Fields
 * `:cache` defaults to `true`; set it to `false` to recompute a field on every serialization (see below)
 * `:reference_properties` can be one of `:short`, `:public`, `:all`, default will select the reference properties format dynamically (see below)
 
-Per-Field Caching
------------------
+## Per-Field Caching
 
 Use `cache: false` for a field whose value should be evaluated on every `as_json` call, even when the rest of the object's JSON comes from the cache. The field is excluded from the cached fragment and merged into the response after that fragment is fetched. Its `definition`, property/version filters, and configured transformations still apply.
 
-``` ruby
+```ruby
 class Product
   include Mongoid::Document
   include Mongoid::CachedJson
@@ -142,7 +140,7 @@ The cached `name` stays unchanged until its cache entry expires or is invalidate
 
 For a `type: :reference` field, `cache: false` bypasses reads and writes of the referenced object's own JSON fragment through that relationship. The parent's other fields remain cached:
 
-``` ruby
+```ruby
 class Order
   include Mongoid::Document
   include Mongoid::CachedJson
@@ -161,15 +159,13 @@ order.as_json # => { number: '123', product: { name: 'Renamed widget', stock: 9 
 
 The `product` reference is recomputed even if the product has a cached JSON fragment from another serialization. This does not disable caching on the `Product` model itself: `product.as_json` and other relationships to that product still use their normal cache policies. References nested inside the product also retain their own cache policies; the bypass is not recursive.
 
-All Stored Fields
------------------
+## All Stored Fields
 
 Use `json_fields :all, display_name: { definition: :display_name }` to expand every Mongoid field declared so far (including `_id`) into an ordinary JSON field, then merge explicit definitions. An explicit definition overrides the generated definition for the same symbol key; for example, `json_fields :all, secret: { properties: :all }` restricts that field to the `:all` representation.
 
 Declare Mongoid fields before `json_fields :all`. Later declarations, dynamic attributes, and associations are not added automatically; declare references explicitly with `type: :reference`. This is opt-in and may expose sensitive stored data or foreign keys, so prefer an explicit allowlist for public APIs. Runtime `as_json(methods: ...)` selection remains unsupported: declare computed methods in `json_fields`.
 
-Reference Properties
---------------------
+## Reference Properties
 
 When calling `as_json` on a model that contains references to other models the value of the `:properties` option passed into the `as_json` call will be chosen as follows:
 
@@ -182,7 +178,7 @@ The dynamic selection where `:public` generates `:short` references allows to re
 
 To override this behavior and always return the `:short` JSON for a child reference, use `:reference_properties`. In the following example we would want `Person.as_json(properties: :all)` to return the social security number for that person, but not for all their friends.
 
-``` ruby
+```ruby
 class Person
   include Mongoid::Document
   include Mongoid::CachedJson
@@ -195,16 +191,14 @@ class Person
     name: {},
     ssn: { properties: :all },
     friends: { properties: :public, reference_properties: :short }
-
 end
 ```
 
-Versioning
-----------
+## Versioning
 
 You can set an optional `version` or `versions` attribute on JSON fields. Consider the following definition where the first version defined `:name`, then split it into `:first`, `:middle` and `:last` in version `:v2` and introduced a date of birth in `:v3`.
 
-``` ruby
+```ruby
 class Person
   include Mongoid::Document
   include Mongoid::CachedJson
@@ -213,39 +207,37 @@ class Person
   field :last
 
   def name
-    [ first, middle, last ].compact.join(' ')
+    [first, middle, last].compact.join(' ')
   end
 
   json_fields \
-    first: { versions: [ :v2, :v3 ] },
-    last: { versions: [ :v2, :v3 ] },
-    middle: { versions: [ :v2, :v3 ] },
+    first: { versions: %i[v2 v3] },
+    last: { versions: %i[v2 v3] },
+    middle: { versions: %i[v2 v3] },
     born: { versions: :v3 },
     name: { definition: :name }
-
 end
 ```
 
-``` ruby
+```ruby
 person = Person.create(first: 'John', middle: 'F.', last: 'Kennedy', born: 'May 29, 1917')
 person.as_json # { name: 'John F. Kennedy' }
 person.as_json(version: :v2) # { first: 'John', middle: 'F.', last: 'Kennedy', name: 'John F. Kennedy' }
-person.as_json(version: :v3) # { first: 'John', middle: 'F.', last: 'Kennedy', name: 'John F. Kennedy', born: 'May 29, 1917' }
+person.as_json(version: :v3)
+# { first: 'John', middle: 'F.', last: 'Kennedy', name: 'John F. Kennedy', born: 'May 29, 1917' }
 ```
 
-Schema Cache Versions
----------------------
+## Schema Cache Versions
 
 Declare `json_fields cache_version: 2, name: {}` to add a model-specific schema namespace to its cache keys. Increment it when changing fields, computed values, or transformations in a deployment. This is independent of the API `version:` passed to `as_json`; callers need not change. Omitting `cache_version` preserves existing keys.
 
 New code stops reading old fragments, including referenced fragments of that model. Old entries are not deleted and remain until eviction or a cache-store TTL. The gem does not set a default TTL; configure `expires_in` on your cache store if needed. Updates expire only the current namespace. For rolling deployments or rollbacks, do not reuse a namespace containing stale values: coordinate invalidation or choose another version.
 
-Transformations
----------------
+## Transformations
 
 You can define global transformations on all JSON values with `Mongoid::CachedJson.config.transform`. Each transformation must return a value. In the following example we extend the JSON definition with an application-specific `:trusted` field and encode any content that is not trusted.
 
-``` ruby
+```ruby
 class Widget
   include Mongoid::Document
   include Mongoid::CachedJson
@@ -259,38 +251,34 @@ class Widget
 end
 ```
 
-``` ruby
-  Mongoid::CachedJson.config.transform do |field, definition, value|
-    trusted = !!definition[:trusted]
-    trusted ? value : CGI.escapeHTML(value)
-  end
+```ruby
+Mongoid::CachedJson.config.transform do |field, definition, value|
+  definition[:trusted] ? value : CGI.escapeHTML(value)
+end
 ```
 
-Mixing with Standard as_json
-----------------------------
+## Mixing with Standard `as_json`
 
 Taking part in the `Mongoid::CachedJson` `json_fields` scheme is optional: you can still write `as_json` methods where it makes sense.
 
-Turning Caching Off
--------------------
+## Turning Caching Off
 
 You can set `Mongoid::CachedJson.config.disable_caching = true`. It may be a good idea to set it to `ENV['DISABLE_JSON_CACHING']`, in case this turns out not to be The Solution To All Of Your Performance Problems (TM).
 
 To bypass shared-cache reads and writes for one model while retaining its JSON fields, versions, and property hierarchy, declare `json_fields disable_caching: true, name: {}`. This applies when the model is serialized directly, in collections, or as a reference. Other models, including its parent and referenced children, keep their own caching policy. Changes to an uncached child are visible even when its parent's scalar fields are cached.
 
-Cache Invalidation Boundaries
------------------------------
+## Cache Invalidation Boundaries
 
 Normal model updates and destroys expire that document's JSON fragments through Mongoid callbacks. Bulk or raw collection updates that bypass model callbacks cannot invalidate the cache automatically. Explicitly expire each affected document after such a write:
 
-``` ruby
+```ruby
 User.where(id: user_id).update_all(status: 'active')
 User.find(user_id).expire_cached_json
 ```
 
 Concurrent writes have a separate boundary: an older in-memory instance can repopulate a fragment after another instance has saved newer values and expired the cache. Reload stale instances before serializing them, and expire their fragments if a stale writer may already have repopulated the cache:
 
-``` ruby
+```ruby
 user.reload
 user.expire_cached_json
 user.as_json
@@ -298,12 +286,11 @@ user.as_json
 
 Reloading and expiring are not an atomic cross-process operation. This gem does not provide a distributed revision or compare-and-set protocol for cache stores. Applications requiring strict consistency across concurrent writers should coordinate persistence and cache invalidation themselves or disable caching for the affected data.
 
-Testing JSON
-------------
+## Testing JSON
 
 This library overrides `as_json`, hence testing JSON results can be done at model level.
 
-``` ruby
+```ruby
 describe 'as_json' do
   before :each do
     @person = Person.create!(first: 'John', last: 'Doe')
@@ -316,7 +303,7 @@ end
 
 It's also common to test the results of the API using the [Pathy](https://github.com/twoism/pathy) library.
 
-``` ruby
+```ruby
 describe 'as_json' do
   before :each do
     person = Person.create!(first: 'John', last: 'Doe')
@@ -328,14 +315,13 @@ describe 'as_json' do
 end
 ```
 
-Testing Cache Invalidation
---------------------------
+## Testing Cache Invalidation
 
 Cache is invalidated by calling `:expire_cached_json` on an instance.
 
-``` ruby
+```ruby
 describe 'updating a person' do
-  before :each
+  before :each do
     @person = Person.create!(name: 'John Doe')
   end
   it 'invalidates cache' do
@@ -344,6 +330,7 @@ describe 'updating a person' do
   end
 end
 ```
+
 You may also want to use [this RSpec matcher](spec/support/matchers/invalidate.rb).
 
 ```ruby
@@ -356,12 +343,11 @@ describe 'updating a person' do
 end
 ```
 
-Performance
------------
+## Performance
 
 This gem implements two interesting optimizations.
 
-### Bulk Reference Resolving w/ Local Store
+### Bulk Reference Resolving with a Local Store
 
 Consider an array of Mongoid instances, each with numerous references to other objects. It's typical to see such instances reference the same object. `Mongoid::CachedJson` first collects all JSON references, then resolves them after suppressing duplicates. This significantly reduces the number of cache queries.
 
@@ -369,14 +355,12 @@ Consider an array of Mongoid instances, each with numerous references to other o
 
 Various cache stores, including Memcached, support bulk read operations. The [Dalli](https://github.com/mperham/dalli) gem exposes this via the `read_multi` method. `Mongoid::CachedJson` will always invoke `read_multi` where available, which significantly reduces the number of network roundtrips to the cache servers.
 
-Contributing
-------------
+## Contributing
 
-See [CONTRIBUTING](CONTRIBUTING.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md), [CHANGELOG.md](CHANGELOG.md), and [UPGRADING.md](UPGRADING.md).
 
-Copyright and License
----------------------
+## Copyright and License
 
-MIT License, see [LICENSE](https://github.com/mongoid/mongoid-cached-json/blob/master/LICENSE.md) for details.
+MIT License, see [LICENSE.md](LICENSE.md) for details.
 
 (c) 2012-2014 [Artsy](https://artsy.net) and [Contributors](CHANGELOG.md)
