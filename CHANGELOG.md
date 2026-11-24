@@ -1,3 +1,7 @@
+### 1.7.2 (Next)
+
+* Your contribution here.
+
 ### 1.7.1 (2026/11/24)
 
 * [#40](https://github.com/mongoid/mongoid-cached-json/pull/40): Cover plain criteria and uncached transforms, and combine coverage across actual legacy and modern association APIs - [@dblock](https://github.com/dblock).
