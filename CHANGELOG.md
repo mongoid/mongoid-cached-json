@@ -1,6 +1,7 @@
 ### 1.7.1 (Next)
 
 * [#40](https://github.com/mongoid/mongoid-cached-json/pull/40): Cover plain criteria and uncached transforms, and combine coverage across actual legacy and modern association APIs - [@dblock](https://github.com/dblock).
+* [#46](https://github.com/mongoid/mongoid-cached-json/pull/46): Upgrade danger-pr-comment to 0.3.0 from the `danger` organization and skip empty Danger report comments - [@dblock](https://github.com/dblock).
 * Your contribution here.
 
 ### 1.7.0 (2026/10/16)
